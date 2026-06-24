@@ -1,3 +1,5 @@
+import './password-toggle.js';
+
 function initMobileMenu() {
     const header = document.querySelector('.site-header');
     const menuToggle = document.querySelector('.menu-toggle');

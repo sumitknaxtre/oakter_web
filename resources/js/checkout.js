@@ -1,3 +1,5 @@
+import './password-toggle.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('checkout-form');
     const payButton = document.getElementById('pay-now-button');

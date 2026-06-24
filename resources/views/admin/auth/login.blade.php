@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link rel="icon" type="image/jpeg" href="{{ asset('assets/favicon.png') }}" />
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/app.css', 'resources/js/password-toggle.js'])
   </head>
   <body class="admin-body admin-auth">
     <div class="admin-auth-card">

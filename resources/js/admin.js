@@ -1,3 +1,5 @@
+import './password-toggle.js';
+
 function initAdminCustomerDialog() {
     const dialog = document.getElementById('admin-customer-dialog');
 

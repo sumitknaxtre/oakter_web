@@ -1,6 +1,7 @@
 @import './website.css';
 @import './checkout.css';
 @import './admin.css';
+@import './password-toggle.css';
 
 .primary-nav a[aria-current='page'] {
     color: var(--ink);
