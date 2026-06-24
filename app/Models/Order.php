@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\OrderFulfillmentStatus;
+use App\Support\OrderPaymentStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -19,10 +21,15 @@ class Order extends Model
         'subtotal_paise',
         'discount_paise',
         'amount_paise',
+        'shipping_charges',
+        'tax_amount',
         'coupon_id',
         'coupon_snapshot',
         'currency',
         'status',
+        'payment_status',
+        'payment_method',
+        'fulfillment_status',
         'razorpay_order_id',
         'razorpay_payment_id',
         'razorpay_signature',
@@ -120,7 +127,36 @@ class Order extends Model
 
     public function includedTaxAmount(): float
     {
+        if ($this->tax_amount > 0) {
+            return $this->tax_amount / 100;
+        }
+
         return round($this->amountInRupees() - ($this->amountInRupees() / 1.18), 2);
+    }
+
+    public static function calculateInclusiveTaxPaise(int $amountPaise): int
+    {
+        return (int) round($amountPaise - ($amountPaise / 1.18));
+    }
+
+    public function formattedShippingCharges(): string
+    {
+        return $this->formatPaise($this->shipping_charges);
+    }
+
+    public function formattedTaxAmount(): string
+    {
+        return $this->formatPaise($this->tax_amount);
+    }
+
+    public function paymentStatusLabel(): string
+    {
+        return OrderPaymentStatus::label((int) $this->payment_status);
+    }
+
+    public function fulfillmentStatusLabel(): string
+    {
+        return OrderFulfillmentStatus::label((string) $this->fulfillment_status);
     }
 
     private function formatPaise(int $paise): string

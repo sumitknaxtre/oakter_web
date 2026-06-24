@@ -14,6 +14,8 @@ class AdminPermissions
 
     public const COUPONS = 'coupons';
 
+    public const CUSTOMERS = 'customers';
+
     /**
      * @return array<string, string>
      */
@@ -22,6 +24,7 @@ class AdminPermissions
         return [
             self::DASHBOARD => 'Dashboard',
             self::ORDERS => 'Orders',
+            self::CUSTOMERS => 'Customers',
             self::PRODUCTS => 'Products',
             self::COUPONS => 'Coupons',
         ];
@@ -43,6 +46,7 @@ class AdminPermissions
         return [
             'admin.dashboard' => self::DASHBOARD,
             'admin.orders.*' => self::ORDERS,
+            'admin.customers.*' => self::CUSTOMERS,
             'admin.products.*' => self::PRODUCTS,
             'admin.coupons.*' => self::COUPONS,
         ];

@@ -6,14 +6,19 @@ use App\Http\Requests\StoreCheckoutRequest;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use App\Services\CheckoutAddressService;
 use App\Services\CheckoutLookupService;
 use App\Services\CheckoutUserService;
 use App\Services\CouponService;
 use App\Services\PendingCheckoutService;
 use App\Support\ProductCatalog;
+use App\Support\OrderFulfillmentStatus;
+use App\Support\OrderPaymentStatus;
+use App\Support\RazorpayPaymentMethod;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -191,9 +196,9 @@ class CheckoutController extends Controller
             ]);
         }
 
-        try {
-            $api = new Api(config('razorpay.key_id'), config('razorpay.key_secret'));
+        $api = new Api(config('razorpay.key_id'), config('razorpay.key_secret'));
 
+        try {
             $api->utility->verifyPaymentSignature([
                 'razorpay_order_id' => $validated['razorpay_order_id'],
                 'razorpay_payment_id' => $validated['razorpay_payment_id'],
@@ -237,31 +242,47 @@ class CheckoutController extends Controller
             ], 422);
         }
 
-        $order = Order::query()->create([
-            'user_id' => $pending['user_id'],
-            'product_id' => $pending['product_id'],
-            'product_snapshot' => $pending['product_snapshot'],
-            'shipping_address_id' => $pending['shipping_address_id'],
-            'shipping_snapshot' => $pending['shipping_snapshot'],
-            'billing_address_id' => $pending['billing_address_id'],
-            'billing_snapshot' => $pending['billing_snapshot'],
-            'billing_same_as_shipping' => $pending['billing_same_as_shipping'],
-            'subtotal_paise' => $pending['subtotal_paise'],
-            'discount_paise' => $pending['discount_paise'],
-            'amount_paise' => $pending['amount_paise'],
-            'coupon_id' => $coupon?->id,
-            'coupon_snapshot' => $pending['coupon_snapshot'],
-            'currency' => $pending['currency'],
-            'status' => 'paid',
-            'razorpay_order_id' => $validated['razorpay_order_id'],
-            'razorpay_payment_id' => $validated['razorpay_payment_id'],
-            'razorpay_signature' => $validated['razorpay_signature'],
-            'paid_at' => now(),
-        ]);
+        $paymentMethod = $this->resolvePaymentMethod($api, $validated['razorpay_payment_id']);
 
-        if ($coupon !== null) {
-            $this->couponService->markUsed($coupon);
-        }
+        $order = DB::transaction(function () use ($pending, $pricing, $coupon, $validated, $paymentMethod) {
+            $order = Order::query()->create([
+                'user_id' => $pending['user_id'],
+                'product_id' => $pending['product_id'],
+                'product_snapshot' => $pending['product_snapshot'],
+                'shipping_address_id' => $pending['shipping_address_id'],
+                'shipping_snapshot' => $pending['shipping_snapshot'],
+                'billing_address_id' => $pending['billing_address_id'],
+                'billing_snapshot' => $pending['billing_snapshot'],
+                'billing_same_as_shipping' => $pending['billing_same_as_shipping'],
+                'subtotal_paise' => $pending['subtotal_paise'],
+                'discount_paise' => $pending['discount_paise'],
+                'amount_paise' => $pending['amount_paise'],
+                'shipping_charges' => 0,
+                'tax_amount' => Order::calculateInclusiveTaxPaise($pricing['amount_paise']),
+                'coupon_id' => $coupon?->id,
+                'coupon_snapshot' => $pending['coupon_snapshot'],
+                'currency' => $pending['currency'],
+                'status' => 'paid',
+                'payment_status' => OrderPaymentStatus::Paid,
+                'payment_method' => $paymentMethod,
+                'fulfillment_status' => OrderFulfillmentStatus::Pending,
+                'razorpay_order_id' => $validated['razorpay_order_id'],
+                'razorpay_payment_id' => $validated['razorpay_payment_id'],
+                'razorpay_signature' => $validated['razorpay_signature'],
+                'paid_at' => now(),
+            ]);
+
+            User::query()
+                ->whereKey($pending['user_id'])
+                ->firstOrFail()
+                ->recordSuccessfulOrder($pending['amount_paise']);
+
+            if ($coupon !== null) {
+                $this->couponService->markUsed($coupon);
+            }
+
+            return $order;
+        });
 
         return response()->json([
             'redirect' => route('website.checkout.success', $order),
@@ -308,5 +329,18 @@ class CheckoutController extends Controller
         $tax = $amount - ($amount / 1.18);
 
         return number_format($tax, 2);
+    }
+
+    private function resolvePaymentMethod(Api $api, string $paymentId): string
+    {
+        try {
+            $payment = $api->payment->fetch($paymentId);
+
+            return RazorpayPaymentMethod::labelFromPayment($payment->toArray());
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return 'Razorpay';
+        }
     }
 }

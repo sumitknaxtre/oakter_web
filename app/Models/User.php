@@ -34,6 +34,22 @@ class User extends Authenticatable
         return $this->hasMany(UserAddress::class);
     }
 
+    public function recordSuccessfulOrder(int $amountPaise): void
+    {
+        $this->increment('total_orders');
+        $this->increment('total_spent', $amountPaise);
+    }
+
+    public function totalSpentInRupees(): float
+    {
+        return $this->total_spent / 100;
+    }
+
+    public function formattedTotalSpent(): string
+    {
+        return '₹'.number_format($this->total_spent / 100, 2);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role?->name === Role::ADMIN;

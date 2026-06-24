@@ -49,6 +49,8 @@
             <th>Customer</th>
             <th>Product</th>
             <th>Amount</th>
+            <th>Payment</th>
+            <th>Fulfillment</th>
             <th>Payment ID</th>
             <th>Date</th>
           </tr>
@@ -60,12 +62,17 @@
               <td>@include('admin.partials.order-customer-list-cell', ['order' => $order])</td>
               <td>{{ $order->product_name }}</td>
               <td>{{ $order->formattedAmount() }}</td>
+              <td>
+                <div>{{ $order->paymentStatusLabel() }}</div>
+                <div class="admin-muted">{{ $order->payment_method ?? '—' }}</div>
+              </td>
+              <td>{{ $order->fulfillmentStatusLabel() }}</td>
               <td>{{ $order->razorpay_payment_id ?? '—' }}</td>
               <td>{{ $order->created_at->format('d M Y, h:i A') }}</td>
             </tr>
           @empty
             <tr class="admin-table-empty">
-              <td colspan="6">No orders found.</td>
+              <td colspan="8">No orders found.</td>
             </tr>
           @endforelse
         </tbody>

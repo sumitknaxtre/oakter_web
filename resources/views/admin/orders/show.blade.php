@@ -35,7 +35,12 @@
         @if ($order->discount_paise > 0)
           <p><strong>Discount:</strong> -{{ $order->formattedDiscount() }} ({{ $order->coupon_code }})</p>
         @endif
+        <p><strong>Shipping:</strong> {{ $order->formattedShippingCharges() }}</p>
+        <p><strong>Tax (GST incl.):</strong> {{ $order->formattedTaxAmount() }}</p>
         <p><strong>Amount:</strong> {{ $order->formattedAmount() }}</p>
+        <p><strong>Payment status:</strong> {{ $order->paymentStatusLabel() }}</p>
+        <p><strong>Payment method:</strong> {{ $order->payment_method ?? '—' }}</p>
+        <p><strong>Fulfillment:</strong> {{ $order->fulfillmentStatusLabel() }}</p>
         <p><strong>Razorpay order:</strong> {{ $order->razorpay_order_id ?? '—' }}</p>
         <p><strong>Payment ID:</strong> {{ $order->razorpay_payment_id ?? '—' }}</p>
         <p><strong>Paid at:</strong> {{ $order->paid_at?->format('d M Y, h:i A') ?? '—' }}</p>
