@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['first_name', 'last_name', 'email', 'phone', 'password', 'role_id'])]
+#[Fillable(['first_name', 'last_name', 'email', 'phone', 'password', 'role_id', 'admin_permissions'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -39,6 +39,29 @@ class User extends Authenticatable
         return $this->role?->name === Role::ADMIN;
     }
 
+    public function isSubAdmin(): bool
+    {
+        return $this->role?->name === Role::SUB_ADMIN;
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->isAdmin() || $this->isSubAdmin();
+    }
+
+    public function hasAdminPermission(string $permission): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if (! $this->isSubAdmin()) {
+            return false;
+        }
+
+        return in_array($permission, $this->admin_permissions ?? [], true);
+    }
+
     public function isCustomer(): bool
     {
         return $this->role?->name === Role::CUSTOMER;
@@ -59,6 +82,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'admin_permissions' => 'array',
         ];
     }
 }

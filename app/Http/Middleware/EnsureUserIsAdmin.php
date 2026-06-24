@@ -13,11 +13,7 @@ class EnsureUserIsAdmin
         $user = $request->user();
 
         if ($user === null || ! $user->isAdmin()) {
-            if ($user !== null) {
-                auth()->logout();
-            }
-
-            return redirect()->route('admin.login');
+            abort(403);
         }
 
         return $next($request);

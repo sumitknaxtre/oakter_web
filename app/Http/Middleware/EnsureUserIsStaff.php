@@ -2,17 +2,22 @@
 
 namespace App\Http\Middleware;
 
-use App\Support\AdminPermissions;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class RedirectIfAdminAuthenticated
+class EnsureUserIsStaff
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->isStaff()) {
-            return redirect()->to(AdminPermissions::landingRouteFor(auth()->user()));
+        $user = $request->user();
+
+        if ($user === null || ! $user->isStaff()) {
+            if ($user !== null) {
+                auth()->logout();
+            }
+
+            return redirect()->route('admin.login');
         }
 
         return $next($request);

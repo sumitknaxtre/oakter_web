@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\LoginRequest;
+use App\Support\AdminPermissions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,7 @@ class AuthController extends Controller
                 ->onlyInput('email');
         }
 
-        if (! Auth::user()->isAdmin()) {
+        if (! Auth::user()->isStaff()) {
             Auth::logout();
 
             return back()
@@ -36,7 +37,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('admin.dashboard'));
+        return redirect()->intended(AdminPermissions::landingRouteFor(Auth::user()));
     }
 
     public function destroy(Request $request): RedirectResponse

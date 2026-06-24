@@ -9,6 +9,8 @@ class Role extends Model
 {
     public const ADMIN = 'admin';
 
+    public const SUB_ADMIN = 'sub_admin';
+
     public const CUSTOMER = 'customer';
 
     protected $fillable = [

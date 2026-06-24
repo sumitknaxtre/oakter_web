@@ -18,7 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
+            'staff' => \App\Http\Middleware\EnsureUserIsStaff::class,
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+            'permission' => \App\Http\Middleware\EnsureAdminPermission::class,
         ]);
 
         $middleware->redirectGuestsTo(fn (Request $request) => $request->is('admin') || $request->is('admin/*')

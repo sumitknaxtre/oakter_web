@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('currency', 3)->default('INR');
             $table->json('catalog');
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_in_stock')->default(true);
             $table->timestamps();
         });
     }

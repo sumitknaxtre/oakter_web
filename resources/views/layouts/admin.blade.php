@@ -21,14 +21,7 @@
           <span>Admin panel</span>
         </div>
 
-        <nav class="admin-nav" aria-label="Admin navigation">
-          <a href="{{ route('admin.dashboard') }}" @class(['is-active' => request()->routeIs('admin.dashboard')])>Dashboard</a>
-          <a href="{{ route('admin.orders.index') }}" @class(['is-active' => request()->routeIs('admin.orders.*')])>Orders</a>
-          <a href="{{ route('admin.products.index') }}" @class(['is-active' => request()->routeIs('admin.products.*')])>Products</a>
-          <a href="{{ route('admin.coupons.index') }}" @class(['is-active' => request()->routeIs('admin.coupons.*')])>Coupons</a>
-          <a href="{{ route('admin.profile.edit') }}" @class(['is-active' => request()->routeIs('admin.profile.edit', 'admin.profile.update')])>Profile</a>
-          <a href="{{ route('admin.profile.password.edit') }}" @class(['is-active' => request()->routeIs('admin.profile.password.*')])>Change password</a>
-        </nav>
+        @include('admin.partials.sidebar-nav')
 
         <div class="admin-sidebar-footer">
           <div class="admin-sidebar-user">
