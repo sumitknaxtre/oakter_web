@@ -212,10 +212,15 @@
 
 .admin-table-wrap {
     overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable both-edges;
+    max-width: 100%;
 }
 
 .admin-table {
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
     border-collapse: collapse;
 }
 
@@ -226,6 +231,7 @@
     text-align: left;
     vertical-align: top;
     font-size: 0.92rem;
+    white-space: nowrap;
 }
 
 .admin-table th {
