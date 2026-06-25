@@ -83,7 +83,7 @@
 
     @if ($orders->hasPages())
       <div class="admin-pagination">
-        {{ $orders->links() }}
+        {{ $orders->links('vendor.pagination.admin') }}
       </div>
     @endif
   </section>

@@ -60,7 +60,7 @@
 
     @if ($customers->hasPages())
       <div class="admin-pagination">
-        {{ $customers->links() }}
+        {{ $customers->links('vendor.pagination.admin') }}
       </div>
     @endif
   </section>

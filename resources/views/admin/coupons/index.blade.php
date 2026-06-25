@@ -30,7 +30,7 @@
             <tr>
               <td><strong>{{ $coupon->code }}</strong></td>
               <td>{{ $coupon->formattedDiscount() }}</td>
-              <td>{{ $coupon->products->pluck('name')->join(', ') }}</td>
+              <td class="admin-product-list-cell">{{ $coupon->products->pluck('name')->join(', ') }}</td>
               <td>
                 @if ($coupon->is_active)
                   <span class="admin-badge is-paid">Active</span>
