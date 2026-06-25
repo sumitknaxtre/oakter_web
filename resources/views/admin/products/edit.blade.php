@@ -17,6 +17,19 @@
       @method('PUT')
 
       <div class="admin-field">
+        <label for="sku">Unicommerce SKU</label>
+        <input
+          id="sku"
+          type="text"
+          name="sku"
+          value="{{ old('sku', $product->sku) }}"
+          maxlength="100"
+        />
+        <p class="admin-muted">Must match the item SKU in Uniware for order sync.</p>
+        @error('sku')<p class="admin-error">{{ $message }}</p>@enderror
+      </div>
+
+      <div class="admin-field">
         <label for="price">Selling price (₹)</label>
         <input
           id="price"

@@ -22,7 +22,7 @@
             <th>Status</th>
             <th>Usage</th>
             <th>Schedule</th>
-            <th>Actions</th>
+            <th class="admin-table-actions-cell">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -48,7 +48,7 @@
                   Always on
                 @endif
               </td>
-              <td>
+              <td class="admin-table-actions-cell">
                 <div class="admin-table-actions">
                   <a class="admin-link-button secondary" href="{{ route('admin.coupons.edit', $coupon) }}">Edit</a>
                   <form method="post" action="{{ route('admin.coupons.destroy', $coupon) }}" onsubmit="return confirm('Delete this coupon?');">

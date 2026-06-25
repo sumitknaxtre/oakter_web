@@ -13,7 +13,7 @@ class ProductController extends Controller
     public function index(): View
     {
         $products = Product::query()
-            ->withCount('orders')
+            ->withCount(['orders as orders_count' => fn ($query) => $query->paid()])
             ->orderBy('name')
             ->get();
 
@@ -36,6 +36,7 @@ class ProductController extends Controller
 
         $product->update([
             'is_in_stock' => $request->boolean('is_in_stock'),
+            'sku' => filled($validated['sku'] ?? null) ? $validated['sku'] : null,
         ]);
 
         return redirect()

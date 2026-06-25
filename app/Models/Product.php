@@ -14,6 +14,7 @@ class Product extends Model
     protected $fillable = [
         'slug',
         'config_key',
+        'sku',
         'name',
         'amount_paise',
         'currency',
@@ -154,6 +155,7 @@ class Product extends Model
             'product_id' => $this->id,
             'slug' => $this->slug,
             'config_key' => $this->config_key,
+            'sku' => $this->sku,
             'name' => $this->name,
             'amount_paise' => $this->amount_paise,
             'currency' => $this->currency,

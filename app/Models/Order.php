@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Support\OrderFulfillmentStatus;
 use App\Support\OrderPaymentStatus;
+use App\Support\UnicommerceSyncStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -30,6 +32,10 @@ class Order extends Model
         'payment_status',
         'payment_method',
         'fulfillment_status',
+        'unicommerce_sale_order_code',
+        'unicommerce_sync_status',
+        'unicommerce_synced_at',
+        'unicommerce_last_error',
         'razorpay_order_id',
         'razorpay_payment_id',
         'razorpay_signature',
@@ -45,6 +51,7 @@ class Order extends Model
             'coupon_snapshot' => 'array',
             'billing_same_as_shipping' => 'boolean',
             'paid_at' => 'datetime',
+            'unicommerce_synced_at' => 'datetime',
         ];
     }
 
@@ -61,6 +68,21 @@ class Order extends Model
     public function coupon(): BelongsTo
     {
         return $this->belongsTo(Coupon::class);
+    }
+
+    public function scopePaid(Builder $query): Builder
+    {
+        return $query->where('payment_status', OrderPaymentStatus::Paid);
+    }
+
+    public function scopePendingPayment(Builder $query): Builder
+    {
+        return $query->where('payment_status', OrderPaymentStatus::Pending);
+    }
+
+    public function isPaid(): bool
+    {
+        return (int) $this->payment_status === OrderPaymentStatus::Paid;
     }
 
     public function shippingAddress(): BelongsTo
@@ -157,6 +179,11 @@ class Order extends Model
     public function fulfillmentStatusLabel(): string
     {
         return OrderFulfillmentStatus::label((string) $this->fulfillment_status);
+    }
+
+    public function unicommerceSyncStatusLabel(): string
+    {
+        return UnicommerceSyncStatus::label((string) $this->unicommerce_sync_status);
     }
 
     private function formatPaise(int $paise): string

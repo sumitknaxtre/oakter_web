@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AbandonedOrderController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -33,6 +34,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('orders/export', [OrderController::class, 'export'])->name('orders.export');
             Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
             Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+            Route::get('abandoned-orders', [AbandonedOrderController::class, 'index'])->name('abandoned-orders.index');
         });
 
         Route::middleware('permission:customers')->group(function () {

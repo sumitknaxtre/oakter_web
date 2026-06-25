@@ -32,6 +32,7 @@
             <th>Email</th>
             <th>Phone</th>
             <th>Orders</th>
+            <th>Abandoned</th>
             <th>Total spent</th>
             <th>Joined</th>
           </tr>
@@ -43,12 +44,13 @@
               <td>{{ $customer->email }}</td>
               <td>{{ $customer->phone ?? '—' }}</td>
               <td>{{ number_format($customer->total_orders) }}</td>
+              <td>{{ number_format($customer->abandoned_orders_count) }}</td>
               <td>{{ $customer->formattedTotalSpent() }}</td>
               <td>{{ $customer->created_at->format('d M Y') }}</td>
             </tr>
           @empty
             <tr class="admin-table-empty">
-              <td colspan="6">No customers found.</td>
+              <td colspan="7">No customers found.</td>
             </tr>
           @endforelse
         </tbody>

@@ -30,6 +30,7 @@ class OrderController extends Controller
 
         $orders = Order::query()
             ->with('user')
+            ->paid()
             ->tap(fn ($query) => AdminOrderFilters::apply($query, $filters))
             ->latest()
             ->paginate(15)
@@ -73,6 +74,7 @@ class OrderController extends Controller
 
             $query = Order::query()
                 ->with('user')
+                ->paid()
                 ->tap(fn ($builder) => AdminOrderFilters::apply($builder, $filters))
                 ->latest();
 
@@ -88,6 +90,8 @@ class OrderController extends Controller
 
     public function show(Order $order): View
     {
+        abort_unless($order->isPaid(), 404);
+
         $order->load('user');
 
         return view('admin.orders.show', compact('order'));

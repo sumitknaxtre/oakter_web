@@ -41,6 +41,14 @@
         <p><strong>Payment status:</strong> {{ $order->paymentStatusLabel() }}</p>
         <p><strong>Payment method:</strong> {{ $order->payment_method ?? '—' }}</p>
         <p><strong>Fulfillment:</strong> {{ $order->fulfillmentStatusLabel() }}</p>
+        <p><strong>Unicommerce sync:</strong> {{ $order->unicommerceSyncStatusLabel() }}</p>
+        <p><strong>Uniware order code:</strong> {{ $order->unicommerce_sale_order_code ?? '—' }}</p>
+        @if ($order->unicommerce_synced_at)
+          <p><strong>Synced at:</strong> {{ $order->unicommerce_synced_at->format('d M Y, h:i A') }}</p>
+        @endif
+        @if ($order->unicommerce_last_error)
+          <p><strong>Sync error:</strong> {{ $order->unicommerce_last_error }}</p>
+        @endif
         <p><strong>Razorpay order:</strong> {{ $order->razorpay_order_id ?? '—' }}</p>
         <p><strong>Payment ID:</strong> {{ $order->razorpay_payment_id ?? '—' }}</p>
         <p><strong>Paid at:</strong> {{ $order->paid_at?->format('d M Y, h:i A') ?? '—' }}</p>

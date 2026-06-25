@@ -619,13 +619,29 @@
 }
 
 .admin-table-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.admin-table-actions .admin-link-button {
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 0.84rem;
+    white-space: nowrap;
 }
 
 .admin-table-actions form {
+    display: inline-flex;
     margin: 0;
+}
+
+.admin-table-actions-cell {
+    width: 1%;
+    white-space: nowrap;
+    vertical-align: middle;
 }
 
 .admin-detail-grid {

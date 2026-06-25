@@ -3,7 +3,8 @@
     <a href="{{ route('admin.dashboard') }}" @class(['is-active' => request()->routeIs('admin.dashboard')])>Dashboard</a>
   @endif
   @if (auth()->user()->hasAdminPermission(\App\Support\AdminPermissions::ORDERS))
-    <a href="{{ route('admin.orders.index') }}" @class(['is-active' => request()->routeIs('admin.orders.*')])>Orders</a>
+    <a href="{{ route('admin.orders.index') }}" @class(['is-active' => request()->routeIs('admin.orders.*') && ! request()->routeIs('admin.abandoned-orders.*')])>Orders</a>
+    <a href="{{ route('admin.abandoned-orders.index') }}" @class(['is-active' => request()->routeIs('admin.abandoned-orders.*')])>Abandoned orders</a>
   @endif
   @if (auth()->user()->hasAdminPermission(\App\Support\AdminPermissions::CUSTOMERS))
     <a href="{{ route('admin.customers.index') }}" @class(['is-active' => request()->routeIs('admin.customers.*')])>Customers</a>

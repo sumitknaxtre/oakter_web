@@ -2,13 +2,13 @@
 
 @section('title', 'Oakter B2B Products | EMS, ODM and Manufacturing in India')
 @section('meta_description', 'Talk to Oakter for B2B manufacturing, EMS, ODM, payment devices, energy meters, smart home products and consumer electronics programs.')
-@section('canonical', route('website.b2b'))
+@section('canonical', route('website.collections.all'))
 @section('og_title', 'Oakter B2B Products | EMS, ODM and Manufacturing in India')
 
 @section('structured_data')
     <script type="application/ld+json">{"@@context":"https://schema.org","@@type":"Organization","name":"Oakter","url":"https://www.oakter.com","logo":"{{ asset('assets/oakter-logo-1200.png') }}","sameAs":["https://www.instagram.com/oyeoakter/","https://www.facebook.com/oakter/","https://www.youtube.com/channel/UC3h_V9-78yWVbtTi5eNWvZQ"],"contactPoint":[{"@@type":"ContactPoint","telephone":"+91-75750-40506","contactType":"customer support","areaServed":"IN"}]}</script>
-    <script type="application/ld+json">{"@@context":"https://schema.org","@@type":"ProfessionalService","name":"Oakter B2B Products","url":"{{ route('website.b2b') }}","provider":{"@@type":"Organization","name":"Oakter","url":"https://www.oakter.com"},"areaServed":"India","serviceType":["EMS manufacturing","ODM services","B2B electronics manufacturing"]}</script>
-    <script type="application/ld+json">{"@@context":"https://schema.org","@@type":"BreadcrumbList","itemListElement":[{"@@type":"ListItem","position":1,"name":"Home","item":"https://www.oakter.com/"},{"@@type":"ListItem","position":2,"name":"Oakter B2B Products","item":"{{ route('website.b2b') }}"}]}</script>
+    <script type="application/ld+json">{"@@context":"https://schema.org","@@type":"ProfessionalService","name":"Oakter B2B Products","url":"{{ route('website.collections.all') }}","provider":{"@@type":"Organization","name":"Oakter","url":"https://www.oakter.com"},"areaServed":"India","serviceType":["EMS manufacturing","ODM services","B2B electronics manufacturing"]}</script>
+    <script type="application/ld+json">{"@@context":"https://schema.org","@@type":"BreadcrumbList","itemListElement":[{"@@type":"ListItem","position":1,"name":"Home","item":"https://www.oakter.com/"},{"@@type":"ListItem","position":2,"name":"Oakter B2B Products","item":"{{ route('website.collections.all') }}"}]}</script>
 @endsection
 
 @section('content')

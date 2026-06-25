@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -13,9 +14,17 @@ class UpdateProductRequest extends FormRequest
 
     public function rules(): array
     {
+        $product = $this->route('product');
+
         return [
             'price' => ['required', 'numeric', 'min:1'],
             'mrp' => ['required', 'numeric', 'min:1', 'gte:price'],
+            'sku' => [
+                'nullable',
+                'string',
+                'max:100',
+                Rule::unique('products', 'sku')->ignore($product?->id),
+            ],
             'is_in_stock' => ['sometimes', 'boolean'],
         ];
     }

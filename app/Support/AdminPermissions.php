@@ -46,6 +46,7 @@ class AdminPermissions
         return [
             'admin.dashboard' => self::DASHBOARD,
             'admin.orders.*' => self::ORDERS,
+            'admin.abandoned-orders.*' => self::ORDERS,
             'admin.customers.*' => self::CUSTOMERS,
             'admin.products.*' => self::PRODUCTS,
             'admin.coupons.*' => self::COUPONS,

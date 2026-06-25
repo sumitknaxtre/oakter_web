@@ -30,18 +30,31 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
   </head>
   <body @class([
-    'page-studio' => request()->routeIs('website.home', 'website.buy_studio_ac'),
+    'page-studio' => request()->routeIs(
+        'website.home',
+        'website.buy_studio_ac',
+        'website.legacy.collections.mini_ac',
+        'website.legacy.products.studio_ac',
+        'website.legacy.blogs.news',
+        'website.legacy.pages.warranty_policy',
+    ),
     'page-buy' => request()->routeIs([
       'website.buy_studio_ac',
       'website.buy_mini_ups',
       'website.buy_mini_ups_airfiber',
       'website.buy_gan_charger',
     ]),
-    'page-ups' => request()->routeIs('website.mini_ups', 'website.buy_mini_ups', 'website.buy_mini_ups_airfiber'),
+    'page-ups' => request()->routeIs(
+        'website.mini_ups',
+        'website.buy_mini_ups',
+        'website.buy_mini_ups_airfiber',
+        'website.legacy.products.mini_ups_pro',
+        'website.legacy.mini_ups_airfiber',
+    ),
     'page-gan' => request()->routeIs('website.gan_charger', 'website.buy_gan_charger'),
-    'page-b2b' => request()->routeIs('website.b2b'),
-    'page-about' => request()->routeIs('website.about'),
-    'page-contact' => request()->routeIs('website.contact'),
+    'page-b2b' => request()->routeIs('website.collections.all'),
+    'page-about' => request()->routeIs('website.about', 'website.legacy.pages.about_us'),
+    'page-contact' => request()->routeIs('website.contact', 'website.legacy.pages.contact_us', 'website.legacy.pages.support'),
     'page-privacy' => request()->routeIs('website.privacy'),
   ])>
     @include('website.partials.header')

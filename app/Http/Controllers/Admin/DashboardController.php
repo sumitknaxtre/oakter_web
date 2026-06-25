@@ -11,12 +11,13 @@ class DashboardController extends Controller
     public function __invoke(): View
     {
         $stats = [
-            'total_orders' => Order::query()->count(),
-            'revenue' => Order::query()->sum('amount_paise') / 100,
+            'total_orders' => Order::query()->paid()->count(),
+            'revenue' => Order::query()->paid()->sum('amount_paise') / 100,
         ];
 
         $recentOrders = Order::query()
             ->with('user')
+            ->paid()
             ->latest()
             ->limit(8)
             ->get();
