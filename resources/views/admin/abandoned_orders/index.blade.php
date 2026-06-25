@@ -8,6 +8,7 @@
       <h1>Abandoned orders</h1>
       <p>Checkouts where payment was started but not completed successfully.</p>
     </div>
+    <a class="admin-link-button secondary" href="{{ $exportUrl }}">Export CSV</a>
   </div>
 
   <form class="admin-filters" method="get" action="{{ route('admin.abandoned-orders.index') }}">

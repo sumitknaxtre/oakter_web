@@ -35,6 +35,17 @@ class AdminAbandonedOrderFilters
     }
 
     /**
+     * @param  array{q: string}  $filters
+     * @return array<string, string>
+     */
+    public static function queryParameters(array $filters): array
+    {
+        return array_filter([
+            'q' => $filters['q'],
+        ]);
+    }
+
+    /**
      * @param  Builder<\App\Models\Order>  $query
      * @param  array{q: string}  $filters
      */

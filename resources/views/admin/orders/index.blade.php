@@ -49,6 +49,7 @@
             <th>Customer</th>
             <th>Product</th>
             <th>Amount</th>
+            <th>Coupon</th>
             <th>Payment</th>
             <th>Fulfillment</th>
             <th>Payment ID</th>
@@ -62,6 +63,7 @@
               <td>@include('admin.partials.order-customer-list-cell', ['order' => $order])</td>
               <td>{{ $order->product_name }}</td>
               <td>{{ $order->formattedAmount() }}</td>
+              <td>{{ $order->coupon_code ?? '—' }}</td>
               <td>
                 <div>{{ $order->paymentStatusLabel() }}</div>
                 <div class="admin-muted">{{ $order->payment_method ?? '—' }}</div>
@@ -72,7 +74,7 @@
             </tr>
           @empty
             <tr class="admin-table-empty">
-              <td colspan="8">No orders found.</td>
+              <td colspan="9">No orders found.</td>
             </tr>
           @endforelse
         </tbody>

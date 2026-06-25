@@ -8,6 +8,7 @@
       <h1>Customers</h1>
       <p>View customers who have checked out on the website.</p>
     </div>
+    <a class="admin-link-button secondary" href="{{ $exportUrl }}">Export CSV</a>
   </div>
 
   <form class="admin-filters" method="get" action="{{ route('admin.customers.index') }}">
