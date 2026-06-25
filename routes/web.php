@@ -26,6 +26,7 @@ Route::view('/pages/contact-us', 'website.contact_us')->name('website.legacy.pag
 Route::view('/pages/support', 'website.contact_us')->name('website.legacy.pages.support');
 Route::view('/pages/about-us', 'website.about_us')->name('website.legacy.pages.about_us');
 Route::view('/products/mini-ups-pro', 'website.mini_ups')->name('website.legacy.products.mini_ups_pro');
+Route::view('/products/mini-ups-for-airfiber', 'website.mini_ups')->name('website.legacy.products.mini_ups_airfiber');
 Route::view('/mini-ups-for-airfiber', 'website.mini_ups')->name('website.legacy.mini_ups_airfiber');
 Route::view('/mini-ups', 'website.mini_ups')->name('website.mini_ups');
 Route::view('/gan-charger', 'website.gan_charger')->name('website.gan_charger');

@@ -49,6 +49,7 @@
         'website.buy_mini_ups',
         'website.buy_mini_ups_airfiber',
         'website.legacy.products.mini_ups_pro',
+        'website.legacy.products.mini_ups_airfiber',
         'website.legacy.mini_ups_airfiber',
     ),
     'page-gan' => request()->routeIs('website.gan_charger', 'website.buy_gan_charger'),
