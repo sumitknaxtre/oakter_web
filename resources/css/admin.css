@@ -542,6 +542,44 @@
     color: var(--ink);
 }
 
+.admin-customer-list-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.admin-customer-edit-link {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: var(--ink);
+}
+
+.admin-customer-edit-link:hover {
+    color: #9a3412;
+}
+
+.admin-customer-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+
+.admin-billing-fields {
+    display: grid;
+    gap: 16px;
+    padding-top: 4px;
+}
+
+.admin-topbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
 .admin-dialog {
     width: min(92vw, 640px);
     max-height: 88vh;
@@ -689,6 +727,31 @@
     padding: 0 10px;
     font-size: 0.84rem;
     white-space: nowrap;
+}
+
+.admin-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.admin-icon-button:hover {
+    border-color: #cfcac2;
+    background: var(--paper);
+    color: var(--ink);
+}
+
+.admin-icon-button svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
 }
 
 .admin-table-actions form {

@@ -89,7 +89,7 @@
           <div class="shipping-method">
             <div>
               <strong>Free shipping</strong>
-              <span>10 to 14 business days</span>
+              <span>5 to 7 working days</span>
             </div>
             <em>FREE</em>
           </div>

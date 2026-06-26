@@ -2,4 +2,5 @@
   'record' => $order,
   'dialogId' => 'customer-details-'.$order->id,
   'dialogLabel' => 'Order #'.$order->id,
+  'editUrl' => route('admin.orders.customer.edit', $order),
 ])

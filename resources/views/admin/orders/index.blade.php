@@ -54,12 +54,13 @@
             <th>Fulfillment</th>
             <th>Payment ID</th>
             <th>Date</th>
+            <th class="admin-table-actions-cell">Actions</th>
           </tr>
         </thead>
         <tbody>
           @forelse ($orders as $order)
             <tr>
-              <td><a href="{{ route('admin.orders.show', $order) }}">#{{ $order->id }}</a></td>
+              <td>#{{ $order->id }}</td>
               <td>@include('admin.partials.order-customer-list-cell', ['order' => $order])</td>
               <td>{{ $order->product_name }}</td>
               <td>{{ $order->formattedAmount() }}</td>
@@ -71,10 +72,21 @@
               <td>{{ $order->fulfillmentStatusLabel() }}</td>
               <td>{{ $order->razorpay_payment_id ?? '—' }}</td>
               <td>{{ $order->created_at->format('d M Y, h:i A') }}</td>
+              <td class="admin-table-actions-cell">
+                <div class="admin-table-actions">
+                  <a
+                    class="admin-link-button secondary"
+                    href="{{ route('admin.orders.show', $order) }}"
+                    aria-label="View order #{{ $order->id }} details"
+                  >
+                    View
+                  </a>
+                </div>
+              </td>
             </tr>
           @empty
             <tr class="admin-table-empty">
-              <td colspan="9">No orders found.</td>
+              <td colspan="10">No orders found.</td>
             </tr>
           @endforelse
         </tbody>

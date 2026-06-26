@@ -80,4 +80,10 @@
       </dl>
     @endif
   </section>
+
+  @isset($editUrl)
+    <div class="admin-customer-modal-actions">
+      <a class="admin-link-button secondary" href="{{ $editUrl }}">Edit customer details</a>
+    </div>
+  @endisset
 </div>

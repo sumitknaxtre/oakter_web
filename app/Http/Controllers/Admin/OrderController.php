@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\OrdersExport;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateOrderCustomerRequest;
 use App\Models\Order;
+use App\Services\AdminOrderCustomerService;
 use App\Support\AdminOrderFilters;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,6 +15,10 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class OrderController extends Controller
 {
+    public function __construct(
+        private readonly AdminOrderCustomerService $customerService,
+    ) {}
+
     public function index(Request $request): View|RedirectResponse
     {
         $validator = AdminOrderFilters::makeValidator($request);
@@ -95,5 +101,31 @@ class OrderController extends Controller
         $order->load('user');
 
         return view('admin.orders.show', compact('order'));
+    }
+
+    public function editCustomer(Order $order): View
+    {
+        $order->load('user');
+
+        return view('admin.orders.edit_customer', [
+            'order' => $order,
+            'form' => $this->customerService->formDefaults($order),
+            'returnUrl' => $order->isPaid()
+                ? route('admin.orders.index')
+                : route('admin.abandoned-orders.index'),
+        ]);
+    }
+
+    public function updateCustomer(UpdateOrderCustomerRequest $request, Order $order): RedirectResponse
+    {
+        $this->customerService->update($order, $request->validated());
+
+        $redirect = $order->isPaid()
+            ? route('admin.orders.index')
+            : route('admin.abandoned-orders.index');
+
+        return redirect()
+            ->to($redirect)
+            ->with('status', 'Customer details updated successfully.');
     }
 }

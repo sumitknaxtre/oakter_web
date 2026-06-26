@@ -47,6 +47,7 @@
                   'record' => $order,
                   'dialogId' => 'customer-details-abandoned-'.$order->id,
                   'dialogLabel' => 'Abandoned #'.$order->id,
+                  'editUrl' => route('admin.orders.customer.edit', $order),
                 ])
               </td>
               <td>{{ $order->product_name }}</td>
@@ -74,7 +75,10 @@
   @push('admin-customer-templates')
     @foreach ($orders as $order)
       <template id="customer-details-abandoned-{{ $order->id }}">
-        @include('admin.partials.customer-modal-content', ['record' => $order])
+        @include('admin.partials.customer-modal-content', [
+          'record' => $order,
+          'editUrl' => route('admin.orders.customer.edit', $order),
+        ])
       </template>
     @endforeach
   @endpush

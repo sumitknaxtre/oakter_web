@@ -13,7 +13,10 @@
       <h1>Order #{{ $order->id }}</h1>
       <p>{{ $order->product_name }}</p>
     </div>
-    <a class="admin-link-button secondary" href="{{ route('admin.orders.index') }}">Back to orders</a>
+    <div class="admin-topbar-actions">
+      <a class="admin-link-button secondary" href="{{ route('admin.orders.index') }}">Back to orders</a>
+      <a class="admin-link-button" href="{{ route('admin.orders.customer.edit', $order) }}">Edit customer</a>
+    </div>
   </div>
 
   <section class="admin-panel">

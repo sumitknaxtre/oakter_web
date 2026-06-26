@@ -40,3 +40,29 @@ function initAdminCustomerDialog() {
 }
 
 initAdminCustomerDialog();
+
+function initAdminBillingFieldsToggle() {
+    const toggle = document.querySelector('[data-billing-same-toggle]');
+    const billingFields = document.querySelector('[data-billing-fields]');
+
+    if (!toggle || !billingFields) {
+        return;
+    }
+
+    const syncBillingFields = () => {
+        const hidden = toggle.checked;
+        billingFields.hidden = hidden;
+        billingFields.querySelectorAll('input').forEach((input) => {
+            if (! input.name.startsWith('billing_') || input.name === 'billing_address_line2') {
+                return;
+            }
+
+            input.toggleAttribute('required', ! hidden);
+        });
+    };
+
+    toggle.addEventListener('change', syncBillingFields);
+    syncBillingFields();
+}
+
+initAdminBillingFieldsToggle();
