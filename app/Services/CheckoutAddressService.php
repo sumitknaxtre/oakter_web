@@ -18,7 +18,7 @@ class CheckoutAddressService
      */
     public function persistForCheckout(User $user, array $validated): array
     {
-        $billingSame = (bool) $validated['billing_same_as_shipping'];
+        $billingSame = $this->asBoolean($validated['billing_same_as_shipping']);
         $shippingPayload = $this->shippingPayload($validated);
         $shippingAddress = $this->upsertAddress($user, $shippingPayload);
         $shippingAddress->update([
@@ -105,5 +105,18 @@ class CheckoutAddressService
         }
 
         return $user->addresses()->create($payload);
+    }
+
+    private function asBoolean(mixed $value): bool
+    {
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_int($value) || is_float($value)) {
+            return (int) $value !== 0;
+        }
+
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 }

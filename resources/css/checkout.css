@@ -189,6 +189,10 @@
     margin-top: 14px;
 }
 
+.billing-fields[hidden] {
+    display: none !important;
+}
+
 .checkout-pay-button {
     width: 100%;
     min-height: 54px;

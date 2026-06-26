@@ -574,6 +574,10 @@
     padding-top: 4px;
 }
 
+.admin-billing-fields[hidden] {
+    display: none !important;
+}
+
 .admin-topbar-actions {
     display: flex;
     flex-wrap: wrap;

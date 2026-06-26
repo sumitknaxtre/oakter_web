@@ -29,7 +29,10 @@ class AdminOrderCustomerService
             'state' => old('state', $shipping['state'] ?? ''),
             'pincode' => old('pincode', $shipping['pincode'] ?? ''),
             'country' => old('country', $shipping['country'] ?? 'India'),
-            'billing_same_as_shipping' => old('billing_same_as_shipping', $order->billing_same_as_shipping),
+            'billing_same_as_shipping' => $this->asBoolean(
+                old('billing_same_as_shipping', $order->billing_same_as_shipping),
+                true,
+            ),
             'billing_first_name' => old('billing_first_name', $billing['first_name'] ?? ''),
             'billing_last_name' => old('billing_last_name', $billing['last_name'] ?? ''),
             'billing_address_line1' => old('billing_address_line1', $billing['address_line1'] ?? ''),
@@ -45,7 +48,7 @@ class AdminOrderCustomerService
     {
         $order->loadMissing(['user', 'shippingAddress', 'billingAddress']);
 
-        $billingSame = (bool) ($validated['billing_same_as_shipping'] ?? true);
+        $billingSame = $this->asBoolean($validated['billing_same_as_shipping'] ?? true, true);
         $shippingSnapshot = $this->shippingSnapshot($validated);
         $billingSnapshot = $billingSame
             ? $shippingSnapshot
@@ -153,5 +156,22 @@ class AdminOrderCustomerService
         }
 
         $address->update($this->addressAttributes($snapshot));
+    }
+
+    private function asBoolean(mixed $value, bool $default = false): bool
+    {
+        if ($value === null) {
+            return $default;
+        }
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_int($value) || is_float($value)) {
+            return (int) $value !== 0;
+        }
+
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 }

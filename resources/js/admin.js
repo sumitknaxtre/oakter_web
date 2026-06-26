@@ -65,4 +65,4 @@ function initAdminBillingFieldsToggle() {
     syncBillingFields();
 }
 
-initAdminBillingFieldsToggle();
+document.addEventListener('DOMContentLoaded', initAdminBillingFieldsToggle);
