@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\MediaInsightsController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'website.index')->name('website.home');
@@ -25,7 +26,9 @@ Route::view('/pages/warranty-policy', 'website.index')->name('website.legacy.pag
 Route::view('/pages/contact-us', 'website.contact_us')->name('website.legacy.pages.contact_us');
 Route::view('/pages/support', 'website.contact_us')->name('website.legacy.pages.support');
 Route::view('/pages/about-us', 'website.about_us')->name('website.legacy.pages.about_us');
+Route::get('/pages/media-insights', MediaInsightsController::class)->name('website.media_insights');
 Route::view('/products/mini-ups-pro', 'website.mini_ups')->name('website.legacy.products.mini_ups_pro');
+Route::view('/products/mini-ups-12v', 'website.mini_ups')->name('website.legacy.products.mini_ups_12v');
 Route::view('/products/mini-ups-for-airfiber', 'website.mini_ups')->name('website.legacy.products.mini_ups_airfiber');
 Route::view('/mini-ups-for-airfiber', 'website.mini_ups')->name('website.legacy.mini_ups_airfiber');
 Route::view('/mini-ups', 'website.mini_ups')->name('website.mini_ups');

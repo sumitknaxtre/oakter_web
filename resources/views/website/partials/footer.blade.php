@@ -31,6 +31,7 @@
     <div class="footer-col">
       <strong>Company</strong>
       <a href="{{ route('website.about') }}" @if (request()->routeIs('website.about', 'website.legacy.pages.about_us')) aria-current="page" @endif>About us</a>
+      <a href="{{ route('website.media_insights') }}" @if (request()->routeIs('website.media_insights')) aria-current="page" @endif>Media Insights</a>
       <a href="{{ route('website.contact') }}" @if (request()->routeIs('website.contact', 'website.legacy.pages.contact_us', 'website.legacy.pages.support')) aria-current="page" @endif>Contact us</a>
       <a href="tel:+917575040506">+91 75750-40506</a>
       <a href="mailto:oye@oakter.com">oye@oakter.com</a>
@@ -38,6 +39,8 @@
   </div>
   <div class="footer-bottom">
     <span>&copy; {{ date('Y') }} Oakter. Made in India.</span>
-    <a href="{{ route('website.privacy') }}" @if (request()->routeIs('website.privacy')) aria-current="page" @endif>Privacy policy</a>
+    <div class="footer-bottom-links">
+      <a href="{{ route('website.privacy') }}" @if (request()->routeIs('website.privacy')) aria-current="page" @endif>Privacy policy</a>
+    </div>
   </div>
 </footer>

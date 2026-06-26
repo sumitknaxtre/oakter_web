@@ -15,6 +15,9 @@
   @if (auth()->user()->hasAdminPermission(\App\Support\AdminPermissions::COUPONS))
     <a href="{{ route('admin.coupons.index') }}" @class(['is-active' => request()->routeIs('admin.coupons.*')])>Coupons</a>
   @endif
+  @if (auth()->user()->hasAdminPermission(\App\Support\AdminPermissions::NEWS))
+    <a href="{{ route('admin.news-articles.index') }}" @class(['is-active' => request()->routeIs('admin.news-articles.*')])>News articles</a>
+  @endif
   @if (auth()->user()->isAdmin())
     <a href="{{ route('admin.sub-admins.index') }}" @class(['is-active' => request()->routeIs('admin.sub-admins.*')])>Sub admins</a>
   @endif

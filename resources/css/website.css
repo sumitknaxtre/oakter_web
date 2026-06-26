@@ -38,3 +38,105 @@
 .page-b2b main .b2b-product:nth-of-type(even) {
     background: radial-gradient(circle at 82% 20%, rgba(14, 116, 144, 0.08), transparent 28%), var(--paper);
 }
+
+.media-insights-section {
+    padding: clamp(32px, 5vw, 64px) clamp(20px, 4vw, 40px);
+}
+
+.media-press-list {
+    display: grid;
+    gap: 14px;
+    max-width: 920px;
+}
+
+.media-press-list article {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: #fff;
+    box-shadow: 0 10px 24px #1717170a;
+}
+
+.media-press-list article:has(.media-press-image) {
+    grid-template-columns: 140px 120px minmax(0, 1fr);
+}
+
+.media-press-image {
+    width: 140px;
+}
+
+.media-press-image img {
+    display: block;
+    width: 100%;
+    height: 92px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    object-fit: cover;
+    background: var(--paper);
+}
+
+.media-press-empty {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.media-press-list time {
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+}
+
+.media-press-list h3 {
+    margin: 0 0 6px;
+    font-size: 1rem;
+    line-height: 1.45;
+}
+
+.media-press-list h3 a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.media-press-list h3 a:hover {
+    color: var(--accent);
+}
+
+.media-press-list p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+@media (max-width: 640px) {
+    .media-press-list article,
+    .media-press-list article:has(.media-press-image) {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .media-press-image {
+        width: 100%;
+        max-width: 220px;
+    }
+
+    .media-press-image img {
+        height: auto;
+        aspect-ratio: 16 / 10;
+    }
+}
+
+.footer-bottom-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+}

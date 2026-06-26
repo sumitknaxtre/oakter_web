@@ -14,6 +14,8 @@ class AdminPermissions
 
     public const COUPONS = 'coupons';
 
+    public const NEWS = 'news';
+
     public const CUSTOMERS = 'customers';
 
     /**
@@ -27,6 +29,7 @@ class AdminPermissions
             self::CUSTOMERS => 'Customers',
             self::PRODUCTS => 'Products',
             self::COUPONS => 'Coupons',
+            self::NEWS => 'News articles',
         ];
     }
 
@@ -50,6 +53,7 @@ class AdminPermissions
             'admin.customers.*' => self::CUSTOMERS,
             'admin.products.*' => self::PRODUCTS,
             'admin.coupons.*' => self::COUPONS,
+            'admin.news-articles.*' => self::NEWS,
         ];
     }
 
