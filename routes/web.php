@@ -19,6 +19,19 @@ Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])-
 
 // Old routes (SEO)
 Route::redirect('/b2b-products', '/collections/all', 301)->name('website.b2b');
+// Redirect form pages to oakter.co.in
+foreach ([
+    'ac-5000-btu-installation',
+    'warranty-form',
+    'basic-warranty-form',
+    'pro-warranty-form',
+    'miniups-air-warranty-form',
+    'gan_charger_65W',
+    'ac-btu',
+    'smart-glass-warranty-form',
+] as $path) {
+    Route::redirect('/'.$path, 'https://oakter.co.in/'.$path, 301);
+}
 Route::view('/collections/mini-ac', 'website.index')->name('website.legacy.collections.mini_ac');
 Route::view('/products/studio-ac-0-5-ton', 'website.index')->name('website.legacy.products.studio_ac');
 Route::view('/blogs/news', 'website.index')->name('website.legacy.blogs.news');
