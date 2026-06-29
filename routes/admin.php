@@ -36,6 +36,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
             Route::get('orders/{order}/customer/edit', [OrderController::class, 'editCustomer'])->name('orders.customer.edit');
             Route::put('orders/{order}/customer', [OrderController::class, 'updateCustomer'])->name('orders.customer.update');
+            Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
             Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
             Route::get('abandoned-orders/export', [AbandonedOrderController::class, 'export'])->name('abandoned-orders.export');
             Route::get('abandoned-orders', [AbandonedOrderController::class, 'index'])->name('abandoned-orders.index');

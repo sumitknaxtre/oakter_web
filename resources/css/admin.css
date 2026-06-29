@@ -442,6 +442,16 @@
     font-weight: 600;
 }
 
+.admin-payment-status-refunded {
+    color: #b42318;
+    font-weight: 600;
+}
+
+.admin-detail-grid p.admin-payment-status-refunded,
+.admin-detail-grid p.admin-payment-status-refunded strong {
+    color: #b42318;
+}
+
 .admin-product-cell {
     display: flex;
     align-items: center;

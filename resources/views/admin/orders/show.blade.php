@@ -15,9 +15,25 @@
     </div>
     <div class="admin-topbar-actions">
       <a class="admin-link-button secondary" href="{{ route('admin.orders.index') }}">Back to orders</a>
-      <a class="admin-link-button" href="{{ route('admin.orders.customer.edit', $order) }}">Edit customer</a>
+      @if ($order->canBeCancelled())
+        <form
+          method="post"
+          action="{{ route('admin.orders.cancel', $order) }}"
+          onsubmit="return confirm('Cancel this order and refund {{ $order->formattedAmount() }} to the customer via Razorpay?');"
+        >
+          @csrf
+          <button class="admin-link-button" type="submit" style="border-color:#b42318;color:#b42318;">Cancel &amp; refund</button>
+        </form>
+      @endif
+      @if (! $order->isCancelled())
+        <a class="admin-link-button" href="{{ route('admin.orders.customer.edit', $order) }}">Edit customer</a>
+      @endif
     </div>
   </div>
+
+  @error('cancel')
+    <div class="admin-alert" style="margin-bottom:16px;background:#fef3f2;color:#912018;">{{ $message }}</div>
+  @enderror
 
   <section class="admin-panel">
     <div class="admin-panel-head">
@@ -54,7 +70,16 @@
         @endif
         <p><strong>Razorpay order:</strong> {{ $order->razorpay_order_id ?? '—' }}</p>
         <p><strong>Payment ID:</strong> {{ $order->razorpay_payment_id ?? '—' }}</p>
+        @if ($order->razorpay_refund_id)
+          <p><strong>Refund ID:</strong> {{ $order->razorpay_refund_id }}</p>
+        @endif
         <p><strong>Paid at:</strong> {{ $order->paid_at?->format('d M Y, h:i A') ?? '—' }}</p>
+        @if ($order->cancelled_at)
+          <p class="admin-payment-status-refunded"><strong>Cancelled at:</strong> {{ $order->cancelled_at->format('d M Y, h:i A') }}</p>
+        @endif
+        @if ($order->refunded_at)
+          <p class="admin-payment-status-refunded"><strong>Refunded at:</strong> {{ $order->refunded_at->format('d M Y, h:i A') }}</p>
+        @endif
       </article>
 
       <article>

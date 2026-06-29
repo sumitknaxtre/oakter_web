@@ -40,7 +40,10 @@ class Order extends Model
         'razorpay_order_id',
         'razorpay_payment_id',
         'razorpay_signature',
+        'razorpay_refund_id',
         'paid_at',
+        'cancelled_at',
+        'refunded_at',
         'meta_event_id',
         'meta_purchase_sent_at',
         'attribution',
@@ -56,6 +59,8 @@ class Order extends Model
             'attribution' => 'array',
             'billing_same_as_shipping' => 'boolean',
             'paid_at' => 'datetime',
+            'cancelled_at' => 'datetime',
+            'refunded_at' => 'datetime',
             'meta_purchase_sent_at' => 'datetime',
             'unicommerce_synced_at' => 'datetime',
         ];
@@ -81,6 +86,14 @@ class Order extends Model
         return $query->where('payment_status', OrderPaymentStatus::Paid);
     }
 
+    public function scopeListedInAdmin(Builder $query): Builder
+    {
+        return $query->whereIn('payment_status', [
+            OrderPaymentStatus::Paid,
+            OrderPaymentStatus::Refunded,
+        ]);
+    }
+
     public function scopePendingPayment(Builder $query): Builder
     {
         return $query->where('payment_status', OrderPaymentStatus::Pending);
@@ -89,6 +102,30 @@ class Order extends Model
     public function isPaid(): bool
     {
         return (int) $this->payment_status === OrderPaymentStatus::Paid;
+    }
+
+    public function isRefunded(): bool
+    {
+        return (int) $this->payment_status === OrderPaymentStatus::Refunded;
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->fulfillment_status === OrderFulfillmentStatus::Cancelled
+            || $this->status === 'cancelled';
+    }
+
+    public function canBeCancelled(): bool
+    {
+        return $this->isPaid()
+            && ! $this->isCancelled()
+            && is_string($this->razorpay_payment_id)
+            && $this->razorpay_payment_id !== '';
+    }
+
+    public function isViewableInAdmin(): bool
+    {
+        return $this->isPaid() || $this->isRefunded();
     }
 
     public function shippingAddress(): BelongsTo

@@ -66,7 +66,7 @@
               <td>{{ $order->formattedAmount() }}</td>
               <td>{{ $order->coupon_code ?? '—' }}</td>
               <td>
-                <div>{{ $order->paymentStatusLabel() }}</div>
+                <div @class(['admin-payment-status-refunded' => $order->isRefunded()])>{{ $order->paymentStatusLabel() }}</div>
                 <div class="admin-muted">{{ $order->payment_method ?? '—' }}</div>
               </td>
               <td>{{ $order->fulfillmentStatusLabel() }}</td>

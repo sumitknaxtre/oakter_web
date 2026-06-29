@@ -6,6 +6,7 @@ use App\Exports\OrdersExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateOrderCustomerRequest;
 use App\Models\Order;
+use App\Services\AdminOrderCancellationService;
 use App\Services\AdminOrderCustomerService;
 use App\Support\AdminOrderFilters;
 use Illuminate\Http\RedirectResponse;
@@ -17,6 +18,7 @@ class OrderController extends Controller
 {
     public function __construct(
         private readonly AdminOrderCustomerService $customerService,
+        private readonly AdminOrderCancellationService $cancellationService,
     ) {}
 
     public function index(Request $request): View|RedirectResponse
@@ -36,7 +38,7 @@ class OrderController extends Controller
 
         $orders = Order::query()
             ->with('user')
-            ->paid()
+            ->listedInAdmin()
             ->tap(fn ($query) => AdminOrderFilters::apply($query, $filters))
             ->latest()
             ->paginate(15)
@@ -80,7 +82,7 @@ class OrderController extends Controller
 
             $query = Order::query()
                 ->with('user')
-                ->paid()
+                ->listedInAdmin()
                 ->tap(fn ($builder) => AdminOrderFilters::apply($builder, $filters))
                 ->latest();
 
@@ -96,11 +98,22 @@ class OrderController extends Controller
 
     public function show(Order $order): View
     {
-        abort_unless($order->isPaid(), 404);
+        abort_unless($order->isViewableInAdmin(), 404);
 
         $order->load('user');
 
         return view('admin.orders.show', compact('order'));
+    }
+
+    public function cancel(Order $order): RedirectResponse
+    {
+        abort_unless($order->isViewableInAdmin(), 404);
+
+        $this->cancellationService->cancel($order);
+
+        return redirect()
+            ->route('admin.orders.show', $order)
+            ->with('status', 'Order cancelled and refund processed successfully.');
     }
 
     public function editCustomer(Order $order): View
@@ -110,7 +123,7 @@ class OrderController extends Controller
         return view('admin.orders.edit_customer', [
             'order' => $order,
             'form' => $this->customerService->formDefaults($order),
-            'returnUrl' => $order->isPaid()
+            'returnUrl' => $order->isViewableInAdmin()
                 ? route('admin.orders.index')
                 : route('admin.abandoned-orders.index'),
         ]);
@@ -120,7 +133,7 @@ class OrderController extends Controller
     {
         $this->customerService->update($order, $request->validated());
 
-        $redirect = $order->isPaid()
+        $redirect = $order->isViewableInAdmin()
             ? route('admin.orders.index')
             : route('admin.abandoned-orders.index');
 
