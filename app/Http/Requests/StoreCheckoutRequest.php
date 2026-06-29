@@ -34,6 +34,8 @@ class StoreCheckoutRequest extends FormRequest
             'billing_pincode' => ['nullable', 'required_if:billing_same_as_shipping,false', 'string', 'regex:/^\d{6}$/'],
             'billing_country' => ['nullable', 'required_if:billing_same_as_shipping,false', 'string', 'max:100'],
             'coupon_code' => ['nullable', 'string', 'max:50'],
+            'fbp' => ['nullable', 'string', 'max:255'],
+            'fbc' => ['nullable', 'string', 'max:255'],
         ];
     }
 

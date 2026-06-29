@@ -14,6 +14,7 @@ use App\Services\CheckoutUserService;
 use App\Services\CouponService;
 use App\Services\Meta\MetaProductPayload;
 use App\Services\Meta\MetaPurchaseEventService;
+use App\Support\OrderAttribution;
 use App\Support\ProductCatalog;
 use App\Support\OrderFulfillmentStatus;
 use App\Support\OrderPaymentStatus;
@@ -169,6 +170,7 @@ class CheckoutController extends Controller
             'fulfillment_status' => OrderFulfillmentStatus::Pending,
             'unicommerce_sync_status' => UnicommerceSyncStatus::Pending,
             'razorpay_order_id' => $razorpayOrder['id'],
+            'attribution' => $this->buildOrderAttribution($request),
         ]);
 
         return response()->json([
@@ -270,6 +272,11 @@ class CheckoutController extends Controller
                 'razorpay_signature' => $validated['razorpay_signature'],
                 'paid_at' => now(),
                 'meta_event_id' => $metaEventId,
+                'attribution' => $this->mergeOrderAttribution(
+                    $order->attribution ?? [],
+                    $validated['fbp'] ?? null,
+                    $validated['fbc'] ?? null,
+                ),
             ]);
 
             User::query()
@@ -355,5 +362,33 @@ class CheckoutController extends Controller
 
             return 'Razorpay';
         }
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function buildOrderAttribution(Request $request): ?array
+    {
+        $sessionAttribution = $request->session()->get(OrderAttribution::SESSION_KEY, []);
+        $base = is_array($sessionAttribution) ? $sessionAttribution : [];
+
+        $attribution = OrderAttribution::withMetaCookies(
+            $base,
+            $request->string('fbp')->toString() ?: null,
+            $request->string('fbc')->toString() ?: null,
+        );
+
+        return $attribution === [] ? null : $attribution;
+    }
+
+    /**
+     * @param  array<string, mixed>  $attribution
+     * @return array<string, mixed>|null
+     */
+    private function mergeOrderAttribution(array $attribution, ?string $fbp, ?string $fbc): ?array
+    {
+        $merged = OrderAttribution::withMetaCookies($attribution, $fbp, $fbc);
+
+        return $merged === [] ? null : $merged;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\OrderAttribution;
 use App\Support\OrderFulfillmentStatus;
 use App\Support\OrderPaymentStatus;
 use App\Support\UnicommerceSyncStatus;
@@ -42,6 +43,7 @@ class Order extends Model
         'paid_at',
         'meta_event_id',
         'meta_purchase_sent_at',
+        'attribution',
     ];
 
     protected function casts(): array
@@ -51,6 +53,7 @@ class Order extends Model
             'shipping_snapshot' => 'array',
             'billing_snapshot' => 'array',
             'coupon_snapshot' => 'array',
+            'attribution' => 'array',
             'billing_same_as_shipping' => 'boolean',
             'paid_at' => 'datetime',
             'meta_purchase_sent_at' => 'datetime',
@@ -187,6 +190,19 @@ class Order extends Model
     public function unicommerceSyncStatusLabel(): string
     {
         return UnicommerceSyncStatus::label((string) $this->unicommerce_sync_status);
+    }
+
+    public function attributionLabel(): string
+    {
+        return OrderAttribution::label($this->attribution);
+    }
+
+    /**
+     * @return list<array{label: string, value: string}>
+     */
+    public function attributionDetails(): array
+    {
+        return OrderAttribution::detailRows($this->attribution);
     }
 
     private function formatPaise(int $paise): string

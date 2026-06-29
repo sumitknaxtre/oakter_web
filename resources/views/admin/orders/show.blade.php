@@ -66,6 +66,21 @@
       </article>
 
       <article>
+        <h3>Traffic source</h3>
+        <p><strong>Channel:</strong> {{ $order->attributionLabel() }}</p>
+        @forelse ($order->attributionDetails() as $row)
+          @if ($row['label'] !== 'Channel')
+            <p><strong>{{ $row['label'] }}:</strong> {{ $row['value'] }}</p>
+          @endif
+        @empty
+          <p class="admin-muted">No attribution data captured for this order.</p>
+        @endforelse
+        @if ($order->meta_event_id)
+          <p><strong>Meta event ID:</strong> {{ $order->meta_event_id }}</p>
+        @endif
+      </article>
+
+      <article>
         <h3>Billing address</h3>
         @if ($order->billing_same_as_shipping)
           <p>Same as shipping address</p>

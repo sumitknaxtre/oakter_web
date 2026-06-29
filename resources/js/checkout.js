@@ -255,6 +255,18 @@ document.addEventListener('DOMContentLoaded', () => {
         payButton.textContent = 'Processing...';
 
         try {
+            const formData = new FormData(form);
+            const fbp = window.oakterMeta?.getFbp?.();
+            const fbc = window.oakterMeta?.getFbc?.();
+
+            if (fbp) {
+                formData.set('fbp', fbp);
+            }
+
+            if (fbc) {
+                formData.set('fbc', fbc);
+            }
+
             const response = await fetch(form.action, {
                 method: 'POST',
                 headers: {
@@ -262,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': form.querySelector('input[name="_token"]')?.value ?? '',
                 },
-                body: new FormData(form),
+                body: formData,
             });
 
             const payload = await response.json();

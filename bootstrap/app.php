@@ -23,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \App\Http\Middleware\EnsureAdminPermission::class,
         ]);
 
+        $middleware->web(append: [
+            \App\Http\Middleware\CaptureMarketingAttribution::class,
+        ]);
+
         $middleware->redirectGuestsTo(fn (Request $request) => $request->is('admin') || $request->is('admin/*')
             ? route('admin.login')
             : '/');
