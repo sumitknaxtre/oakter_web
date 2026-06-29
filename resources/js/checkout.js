@@ -1,4 +1,5 @@
 import './password-toggle.js';
+import './meta-pixel.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('checkout-form');
@@ -306,6 +307,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             razorpay_order_id: paymentResponse.razorpay_order_id,
                             razorpay_payment_id: paymentResponse.razorpay_payment_id,
                             razorpay_signature: paymentResponse.razorpay_signature,
+                            fbp: window.oakterMeta?.getFbp?.() ?? null,
+                            fbc: window.oakterMeta?.getFbc?.() ?? null,
                         }),
                     });
 

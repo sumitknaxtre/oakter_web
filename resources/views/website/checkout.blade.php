@@ -235,3 +235,13 @@
     };
   </script>
 @endpush
+
+@if (config('meta.enable_pixel') && ! empty($metaCheckoutProduct))
+  @push('meta_pixel_events')
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        window.oakterMeta?.trackInitiateCheckout(@json($metaCheckoutProduct));
+      });
+    </script>
+  @endpush
+@endif

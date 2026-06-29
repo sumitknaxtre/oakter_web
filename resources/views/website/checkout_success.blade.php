@@ -37,3 +37,17 @@
     </div>
   </section>
 @endsection
+
+{{-- Browser Purchase pixel — same event_id as server CAPI for Meta deduplication. --}}
+@if (config('meta.enable_pixel') && $order->meta_event_id && ! empty($metaPurchaseProduct))
+  @push('meta_pixel_events')
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        window.oakterMeta?.trackPurchase(
+          @json($metaPurchaseProduct),
+          @json($order->meta_event_id),
+        );
+      });
+    </script>
+  @endpush
+@endif

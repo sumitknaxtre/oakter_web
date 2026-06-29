@@ -96,4 +96,7 @@
           ])
         </div>
       </section>
+
+  @include('website.partials.meta-view-content', ['configKey' => 'mini_ups'])
+  @include('website.partials.meta-view-content', ['configKey' => 'mini_ups_airfiber'])
 @endsection

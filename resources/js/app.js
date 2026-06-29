@@ -1,4 +1,5 @@
 import './password-toggle.js';
+import './meta-pixel.js';
 
 function initMobileMenu() {
     const header = document.querySelector('.site-header');

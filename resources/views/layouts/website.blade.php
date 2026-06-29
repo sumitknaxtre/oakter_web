@@ -27,6 +27,7 @@
       rel="stylesheet"
     />
     <link rel="icon" type="image/png" href="{{ asset('assets/favicon.png') }}" />
+    @include('website.partials.meta-pixel')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
   </head>
   <body @class([
@@ -70,5 +71,6 @@
     </main>
 
     @include('website.partials.footer')
+    @stack('meta_pixel_events')
   </body>
 </html>

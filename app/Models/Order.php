@@ -40,6 +40,8 @@ class Order extends Model
         'razorpay_payment_id',
         'razorpay_signature',
         'paid_at',
+        'meta_event_id',
+        'meta_purchase_sent_at',
     ];
 
     protected function casts(): array
@@ -51,6 +53,7 @@ class Order extends Model
             'coupon_snapshot' => 'array',
             'billing_same_as_shipping' => 'boolean',
             'paid_at' => 'datetime',
+            'meta_purchase_sent_at' => 'datetime',
             'unicommerce_synced_at' => 'datetime',
         ];
     }

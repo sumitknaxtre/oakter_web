@@ -13,6 +13,7 @@
       rel="stylesheet"
     />
     <link rel="icon" type="image/png" href="{{ asset('assets/favicon.png') }}" />
+    @include('website.partials.meta-pixel')
     @vite(['resources/css/app.css', 'resources/js/checkout.js'])
     @stack('head')
   </head>
@@ -26,5 +27,6 @@
     @yield('content')
 
     @stack('scripts')
+    @stack('meta_pixel_events')
   </body>
 </html>

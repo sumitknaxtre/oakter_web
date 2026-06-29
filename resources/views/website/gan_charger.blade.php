@@ -62,4 +62,6 @@
         </section>
         <div class="carousel-dots" aria-label="GaN charger feature slides"></div>
       </div>
+
+  @include('website.partials.meta-view-content', ['configKey' => 'gan_charger'])
 @endsection

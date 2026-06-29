@@ -161,4 +161,6 @@
           </dl>
         </div>
       </section>
+
+  @include('website.partials.meta-view-content', ['configKey' => 'studio_ac'])
 @endsection

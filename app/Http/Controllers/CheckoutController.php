@@ -12,6 +12,8 @@ use App\Services\CheckoutAddressService;
 use App\Services\CheckoutLookupService;
 use App\Services\CheckoutUserService;
 use App\Services\CouponService;
+use App\Services\Meta\MetaProductPayload;
+use App\Services\Meta\MetaPurchaseEventService;
 use App\Support\ProductCatalog;
 use App\Support\OrderFulfillmentStatus;
 use App\Support\OrderPaymentStatus;
@@ -34,6 +36,7 @@ class CheckoutController extends Controller
         private readonly CheckoutAddressService $checkoutAddressService,
         private readonly CheckoutLookupService $checkoutLookupService,
         private readonly CouponService $couponService,
+        private readonly MetaPurchaseEventService $metaPurchaseEventService,
     ) {}
 
     public function show(string $product): View
@@ -58,6 +61,7 @@ class CheckoutController extends Controller
             'product' => $product,
             'states' => config('india.states'),
             'razorpayKey' => config('razorpay.key_id'),
+            'metaCheckoutProduct' => MetaProductPayload::fromCheckoutProduct($product),
         ]);
     }
 
@@ -195,6 +199,8 @@ class CheckoutController extends Controller
             'razorpay_order_id' => ['required', 'string'],
             'razorpay_payment_id' => ['required', 'string'],
             'razorpay_signature' => ['required', 'string'],
+            'fbp' => ['nullable', 'string', 'max:255'],
+            'fbc' => ['nullable', 'string', 'max:255'],
         ]);
 
         $order = Order::query()
@@ -251,8 +257,9 @@ class CheckoutController extends Controller
         }
 
         $paymentMethod = $this->resolvePaymentMethod($api, $validated['razorpay_payment_id']);
+        $metaEventId = (string) Str::uuid();
 
-        DB::transaction(function () use ($order, $pricing, $coupon, $validated, $paymentMethod) {
+        DB::transaction(function () use ($order, $pricing, $coupon, $validated, $paymentMethod, $metaEventId) {
             $order->update([
                 'tax_amount' => Order::calculateInclusiveTaxPaise($pricing['amount_paise']),
                 'coupon_id' => $coupon?->id,
@@ -262,6 +269,7 @@ class CheckoutController extends Controller
                 'razorpay_payment_id' => $validated['razorpay_payment_id'],
                 'razorpay_signature' => $validated['razorpay_signature'],
                 'paid_at' => now(),
+                'meta_event_id' => $metaEventId,
             ]);
 
             User::query()
@@ -278,6 +286,16 @@ class CheckoutController extends Controller
             SyncOrderToUnicommerceJob::dispatch($order->id);
         }
 
+        // Meta CAPI Purchase — queued; failures are logged and never block checkout.
+        $this->metaPurchaseEventService->dispatchPurchase(
+            $order->fresh(),
+            $request->ip(),
+            $request->userAgent(),
+            $validated['fbp'] ?? null,
+            $validated['fbc'] ?? null,
+            route('website.checkout.success', $order),
+        );
+
         return response()->json([
             'redirect' => route('website.checkout.success', $order),
         ]);
@@ -291,6 +309,7 @@ class CheckoutController extends Controller
 
         return view('website.checkout_success', [
             'order' => $order,
+            'metaPurchaseProduct' => MetaProductPayload::fromOrder($order),
         ]);
     }
 
