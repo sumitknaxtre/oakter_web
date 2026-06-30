@@ -15,7 +15,6 @@
     </div>
     <div class="admin-topbar-actions">
       <a class="admin-link-button secondary" href="{{ route('admin.orders.index') }}">Back to orders</a>
-      {{-- Cancel & refund temporarily disabled
       @if ($order->canBeCancelled())
         <form
           method="post"
@@ -26,7 +25,7 @@
           <button class="admin-link-button" type="submit" style="border-color:#b42318;color:#b42318;">Cancel &amp; refund</button>
         </form>
       @endif
-      --}}
+
       @if ($order->canResyncToUnicommerce())
         <form
           method="post"
