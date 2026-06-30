@@ -167,7 +167,7 @@
           </div>
         </section>
 
-        <p id="checkout-error" class="checkout-error" role="alert" hidden></p>
+        <p id="checkout-error" class="checkout-error" role="alert" @unless(session('checkout_error')) hidden @endunless>{{ session('checkout_error') }}</p>
 
         <button class="checkout-pay-button" type="submit" id="pay-now-button">Pay now</button>
       </form>
@@ -231,6 +231,7 @@
       razorpayKey: @json($razorpayKey),
       lookupUrl: @json(route('website.checkout.lookup')),
       couponUrl: @json(route('website.checkout.coupon', $product['slug'])),
+      verifyUrl: @json(route('website.checkout.verify')),
       subtotalPaise: @json($product['amount_paise']),
     };
   </script>

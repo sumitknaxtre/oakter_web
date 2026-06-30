@@ -15,7 +15,12 @@ Route::get('/checkout/{product}', [CheckoutController::class, 'show'])->name('we
 Route::post('/checkout/{product}/coupon', [CheckoutController::class, 'applyCoupon'])->middleware('throttle:30,1')->name('website.checkout.coupon');
 Route::post('/checkout/{product}/order', [CheckoutController::class, 'createOrder'])->name('website.checkout.order');
 Route::post('/checkout/payment/verify', [CheckoutController::class, 'verify'])->name('website.checkout.verify');
+Route::get('/checkout/payment/callback', [CheckoutController::class, 'paymentCallback'])->name('website.checkout.callback');
 Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('website.checkout.success');
+
+Route::post('/razorpay/webhook', \App\Http\Controllers\RazorpayWebhookController::class)
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class])
+    ->name('razorpay.webhook');
 
 // Old routes (SEO)
 Route::redirect('/b2b-products', '/collections/all', 301)->name('website.b2b');

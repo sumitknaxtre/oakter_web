@@ -3,32 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCheckoutRequest;
-use App\Jobs\SyncOrderToUnicommerceJob;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\User;
+use App\Services\Checkout\CheckoutPaymentCompletionService;
 use App\Services\CheckoutAddressService;
 use App\Services\CheckoutLookupService;
 use App\Services\CheckoutUserService;
 use App\Services\CouponService;
 use App\Services\Meta\MetaProductPayload;
-use App\Services\Meta\MetaPurchaseEventService;
 use App\Support\OrderAttribution;
 use App\Support\ProductCatalog;
 use App\Support\OrderFulfillmentStatus;
 use App\Support\OrderPaymentStatus;
-use App\Support\RazorpayPaymentMethod;
 use App\Support\UnicommerceSyncStatus;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use InvalidArgumentException;
 use Razorpay\Api\Api;
-use Razorpay\Api\Errors\SignatureVerificationError;
 
 class CheckoutController extends Controller
 {
@@ -37,7 +33,7 @@ class CheckoutController extends Controller
         private readonly CheckoutAddressService $checkoutAddressService,
         private readonly CheckoutLookupService $checkoutLookupService,
         private readonly CouponService $couponService,
-        private readonly MetaPurchaseEventService $metaPurchaseEventService,
+        private readonly CheckoutPaymentCompletionService $paymentCompletionService,
     ) {}
 
     public function show(string $product): View
@@ -192,7 +188,47 @@ class CheckoutController extends Controller
                 'color' => '#171717',
             ],
             'verify_url' => route('website.checkout.verify'),
+            'callback_url' => route('website.checkout.callback'),
         ]);
+    }
+
+    public function paymentCallback(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'razorpay_order_id' => ['required', 'string'],
+            'razorpay_payment_id' => ['required', 'string'],
+            'razorpay_signature' => ['required', 'string'],
+        ]);
+
+        $result = $this->paymentCompletionService->completeFromSignature(
+            $validated['razorpay_order_id'],
+            $validated['razorpay_payment_id'],
+            $validated['razorpay_signature'],
+            $request->string('fbp')->toString() ?: null,
+            $request->string('fbc')->toString() ?: null,
+            $request->ip(),
+            $request->userAgent(),
+        );
+
+        if ($result->success && $result->order !== null) {
+            return redirect()->route('website.checkout.success', $result->order);
+        }
+
+        $order = Order::query()
+            ->where('razorpay_order_id', $validated['razorpay_order_id'])
+            ->first();
+
+        $productKey = $order?->product_snapshot['config_key'] ?? $order?->product?->config_key;
+
+        if (is_string($productKey) && $productKey !== '') {
+            return redirect()
+                ->route('website.checkout.show', $productKey)
+                ->with('checkout_error', $result->message ?? 'Payment could not be completed. Please contact support if you were charged.');
+        }
+
+        return redirect()
+            ->route('website.home')
+            ->with('checkout_error', $result->message ?? 'Payment could not be completed. Please contact support if you were charged.');
     }
 
     public function verify(Request $request): JsonResponse
@@ -205,107 +241,25 @@ class CheckoutController extends Controller
             'fbc' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $order = Order::query()
-            ->where('razorpay_order_id', $validated['razorpay_order_id'])
-            ->first();
-
-        if ($order === null) {
-            return response()->json([
-                'message' => 'Checkout session expired. Please try again.',
-            ], 422);
-        }
-
-        if ($order->isPaid()) {
-            return response()->json([
-                'redirect' => route('website.checkout.success', $order),
-            ]);
-        }
-
-        $api = new Api(config('razorpay.key_id'), config('razorpay.key_secret'));
-
-        try {
-            $api->utility->verifyPaymentSignature([
-                'razorpay_order_id' => $validated['razorpay_order_id'],
-                'razorpay_payment_id' => $validated['razorpay_payment_id'],
-                'razorpay_signature' => $validated['razorpay_signature'],
-            ]);
-        } catch (SignatureVerificationError) {
-            return response()->json(['message' => 'Payment verification failed.'], 422);
-        }
-
-        $dbProduct = Product::query()->findOrFail($order->product_id);
-        $dbProduct->ensureInStock();
-
-        $coupon = $order->coupon_id
-            ? Coupon::query()->with('products')->find($order->coupon_id)
-            : null;
-
-        if ($coupon !== null) {
-            try {
-                $this->couponService->assertApplicable($coupon, $dbProduct);
-            } catch (ValidationException) {
-                return response()->json([
-                    'message' => 'The applied coupon is no longer valid. Please checkout again.',
-                ], 422);
-            }
-        }
-
-        $pricing = $this->couponService->calculatePricing($dbProduct, $coupon);
-
-        if ($pricing['amount_paise'] !== $order->amount_paise) {
-            return response()->json([
-                'message' => 'Order amount mismatch. Please checkout again.',
-            ], 422);
-        }
-
-        $paymentMethod = $this->resolvePaymentMethod($api, $validated['razorpay_payment_id']);
-        $metaEventId = (string) Str::uuid();
-
-        DB::transaction(function () use ($order, $pricing, $coupon, $validated, $paymentMethod, $metaEventId) {
-            $order->update([
-                'tax_amount' => Order::calculateInclusiveTaxPaise($pricing['amount_paise']),
-                'coupon_id' => $coupon?->id,
-                'status' => 'paid',
-                'payment_status' => OrderPaymentStatus::Paid,
-                'payment_method' => $paymentMethod,
-                'razorpay_payment_id' => $validated['razorpay_payment_id'],
-                'razorpay_signature' => $validated['razorpay_signature'],
-                'paid_at' => now(),
-                'meta_event_id' => $metaEventId,
-                'attribution' => $this->mergeOrderAttribution(
-                    $order->attribution ?? [],
-                    $validated['fbp'] ?? null,
-                    $validated['fbc'] ?? null,
-                ),
-            ]);
-
-            User::query()
-                ->whereKey($order->user_id)
-                ->firstOrFail()
-                ->recordSuccessfulOrder($order->amount_paise);
-
-            if ($coupon !== null) {
-                $this->couponService->markUsed($coupon);
-            }
-        });
-
-        if (config('unicommerce.enabled')) {
-            SyncOrderToUnicommerceJob::dispatch($order->id);
-        }
-
-        // Meta CAPI Purchase — queued; failures are logged and never block checkout.
-        $this->metaPurchaseEventService->dispatchPurchase(
-            $order->fresh(),
-            $request->ip(),
-            $request->userAgent(),
+        $result = $this->paymentCompletionService->completeFromSignature(
+            $validated['razorpay_order_id'],
+            $validated['razorpay_payment_id'],
+            $validated['razorpay_signature'],
             $validated['fbp'] ?? null,
             $validated['fbc'] ?? null,
-            route('website.checkout.success', $order),
+            $request->ip(),
+            $request->userAgent(),
         );
 
+        if ($result->success && $result->order !== null) {
+            return response()->json([
+                'redirect' => route('website.checkout.success', $result->order),
+            ]);
+        }
+
         return response()->json([
-            'redirect' => route('website.checkout.success', $order),
-        ]);
+            'message' => $result->message ?? 'Payment verification failed.',
+        ], 422);
     }
 
     public function success(Order $order): View
@@ -351,19 +305,6 @@ class CheckoutController extends Controller
         return number_format($tax, 2);
     }
 
-    private function resolvePaymentMethod(Api $api, string $paymentId): string
-    {
-        try {
-            $payment = $api->payment->fetch($paymentId);
-
-            return RazorpayPaymentMethod::labelFromPayment($payment->toArray());
-        } catch (\Throwable $exception) {
-            report($exception);
-
-            return 'Razorpay';
-        }
-    }
-
     /**
      * @return array<string, mixed>|null
      */
@@ -379,16 +320,5 @@ class CheckoutController extends Controller
         );
 
         return $attribution === [] ? null : $attribution;
-    }
-
-    /**
-     * @param  array<string, mixed>  $attribution
-     * @return array<string, mixed>|null
-     */
-    private function mergeOrderAttribution(array $attribution, ?string $fbp, ?string $fbc): ?array
-    {
-        $merged = OrderAttribution::withMetaCookies($attribution, $fbp, $fbc);
-
-        return $merged === [] ? null : $merged;
     }
 }

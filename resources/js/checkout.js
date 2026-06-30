@@ -1,6 +1,8 @@
 import './password-toggle.js';
 import './meta-pixel.js';
 
+const PENDING_PAYMENT_KEY = 'oakter_pending_payment';
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('checkout-form');
     const payButton = document.getElementById('pay-now-button');
@@ -9,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const billingRadios = form?.querySelectorAll('input[name="billing_same_as_shipping"]');
     const lookupUrl = window.oakterCheckout?.lookupUrl;
     const couponUrl = window.oakterCheckout?.couponUrl;
+    const verifyUrl = window.oakterCheckout?.verifyUrl;
     const couponInput = document.getElementById('coupon-input');
     const couponApplyButton = document.getElementById('coupon-apply-button');
     const couponCodeField = document.getElementById('coupon-code');
@@ -25,6 +28,91 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!form || !payButton) {
         return;
     }
+
+    const csrfToken = () => form.querySelector('input[name="_token"]')?.value ?? '';
+
+    const savePendingPayment = (payment) => {
+        try {
+            sessionStorage.setItem(PENDING_PAYMENT_KEY, JSON.stringify(payment));
+        } catch {
+            // Ignore storage failures.
+        }
+    };
+
+    const clearPendingPayment = () => {
+        try {
+            sessionStorage.removeItem(PENDING_PAYMENT_KEY);
+        } catch {
+            // Ignore storage failures.
+        }
+    };
+
+    const verifyPayment = async (paymentResponse) => {
+        if (!verifyUrl) {
+            throw new Error('Payment verification is not configured.');
+        }
+
+        savePendingPayment(paymentResponse);
+
+        const verifyResponse = await fetch(verifyUrl, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': csrfToken(),
+            },
+            body: JSON.stringify({
+                razorpay_order_id: paymentResponse.razorpay_order_id,
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_signature: paymentResponse.razorpay_signature,
+                fbp: window.oakterMeta?.getFbp?.() ?? null,
+                fbc: window.oakterMeta?.getFbc?.() ?? null,
+            }),
+        });
+
+        const verifyPayload = await verifyResponse.json();
+
+        if (!verifyResponse.ok) {
+            throw new Error(verifyPayload.message ?? 'Payment verification failed.');
+        }
+
+        clearPendingPayment();
+        window.location.href = verifyPayload.redirect;
+    };
+
+    const retryPendingPayment = async () => {
+        if (!verifyUrl) {
+            return;
+        }
+
+        let pending = null;
+
+        try {
+            const raw = sessionStorage.getItem(PENDING_PAYMENT_KEY);
+            pending = raw ? JSON.parse(raw) : null;
+        } catch {
+            clearPendingPayment();
+
+            return;
+        }
+
+        if (!pending?.razorpay_order_id || !pending?.razorpay_payment_id || !pending?.razorpay_signature) {
+            return;
+        }
+
+        payButton.disabled = true;
+        payButton.textContent = 'Confirming payment...';
+        showError('');
+
+        try {
+            await verifyPayment(pending);
+        } catch (error) {
+            showError(error.message ?? 'We received your payment but could not confirm it. Please refresh or contact support.');
+            payButton.disabled = false;
+            payButton.textContent = 'Pay now';
+        }
+    };
 
     const setFieldValue = (name, value) => {
         if (value === null || value === undefined || value === '') {
@@ -200,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': form.querySelector('input[name="_token"]')?.value ?? '',
+                    'X-CSRF-TOKEN': csrfToken(),
                 },
                 body: JSON.stringify({ coupon_code: code }),
             });
@@ -243,6 +331,12 @@ document.addEventListener('DOMContentLoaded', () => {
         errorBox.hidden = !message;
     };
 
+    if (errorBox?.textContent?.trim()) {
+        errorBox.hidden = false;
+    }
+
+    void retryPendingPayment();
+
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
         showError('');
@@ -272,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     Accept: 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': form.querySelector('input[name="_token"]')?.value ?? '',
+                    'X-CSRF-TOKEN': csrfToken(),
                 },
                 body: formData,
             });
@@ -290,6 +384,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Razorpay checkout could not be loaded. Please refresh and try again.');
             }
 
+            const callbackUrl = new URL(payload.callback_url, window.location.origin);
+            const metaFbp = window.oakterMeta?.getFbp?.();
+            const metaFbc = window.oakterMeta?.getFbc?.();
+
+            if (metaFbp) {
+                callbackUrl.searchParams.set('fbp', metaFbp);
+            }
+
+            if (metaFbc) {
+                callbackUrl.searchParams.set('fbc', metaFbc);
+            }
+
             const options = {
                 key: payload.key,
                 amount: payload.amount,
@@ -300,6 +406,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 prefill: payload.prefill,
                 notes: payload.notes,
                 theme: payload.theme,
+                callback_url: callbackUrl.toString(),
+                redirect: true,
                 modal: {
                     ondismiss: () => {
                         payButton.disabled = false;
@@ -307,30 +415,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                 },
                 handler: async (paymentResponse) => {
-                    const verifyResponse = await fetch(payload.verify_url, {
-                        method: 'POST',
-                        headers: {
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': form.querySelector('input[name="_token"]')?.value ?? '',
-                        },
-                        body: JSON.stringify({
-                            razorpay_order_id: paymentResponse.razorpay_order_id,
-                            razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                            razorpay_signature: paymentResponse.razorpay_signature,
-                            fbp: window.oakterMeta?.getFbp?.() ?? null,
-                            fbc: window.oakterMeta?.getFbc?.() ?? null,
-                        }),
-                    });
+                    payButton.disabled = true;
+                    payButton.textContent = 'Confirming payment...';
 
-                    const verifyPayload = await verifyResponse.json();
-
-                    if (!verifyResponse.ok) {
-                        throw new Error(verifyPayload.message ?? 'Payment verification failed.');
+                    try {
+                        await verifyPayment(paymentResponse);
+                    } catch (error) {
+                        showError(error.message ?? 'Payment verification failed. Please refresh or contact support.');
+                        payButton.disabled = false;
+                        payButton.textContent = 'Pay now';
                     }
-
-                    window.location.href = verifyPayload.redirect;
                 },
             };
 
