@@ -58,11 +58,22 @@ class RazorpayWebhookController extends Controller
             $request->userAgent(),
         );
 
-        if (! $result->success && ! $result->alreadyPaid) {
-            report(new \RuntimeException('Razorpay webhook payment completion failed: '.$result->message));
+        if ($result->success) {
+            return response('OK', 200);
         }
 
-        return response('OK', 200);
+        if ($result->alreadyPaid) {
+            return response('Already paid.', 200);
+        }
+
+        report(new \RuntimeException(sprintf(
+            'Razorpay webhook payment completion failed for order %s / payment %s: %s',
+            $razorpayOrderId,
+            $razorpayPaymentId,
+            $result->message ?? 'unknown error',
+        )));
+
+        return response($result->message ?? 'Payment completion failed.', 422);
     }
 
     /**

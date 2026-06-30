@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\AbandonedOrdersExport;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Services\Checkout\CheckoutPaymentCompletionService;
 use App\Support\AdminAbandonedOrderFilters;
+use App\Support\OrderPaymentStatus;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -13,6 +15,10 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AbandonedOrderController extends Controller
 {
+    public function __construct(
+        private readonly CheckoutPaymentCompletionService $paymentCompletionService,
+    ) {}
+
     public function index(Request $request): View|RedirectResponse
     {
         $validator = AdminAbandonedOrderFilters::makeValidator($request);
@@ -85,5 +91,24 @@ class AbandonedOrderController extends Controller
         }, $filename, [
             'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
+    }
+
+    public function confirmPayment(Order $order): RedirectResponse
+    {
+        abort_unless((int) $order->payment_status === OrderPaymentStatus::Pending, 404);
+
+        $result = $this->paymentCompletionService->reconcilePendingOrder($order);
+
+        if ($result->success && $result->order !== null) {
+            return redirect()
+                ->route('admin.orders.show', $result->order)
+                ->with('status', 'Payment confirmed. Order moved to paid orders.');
+        }
+
+        return redirect()
+            ->route('admin.abandoned-orders.index')
+            ->withErrors([
+                'payment' => $result->message ?? 'Unable to confirm payment for this order.',
+            ]);
     }
 }

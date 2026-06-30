@@ -41,6 +41,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
             Route::get('abandoned-orders/export', [AbandonedOrderController::class, 'export'])->name('abandoned-orders.export');
             Route::get('abandoned-orders', [AbandonedOrderController::class, 'index'])->name('abandoned-orders.index');
+            Route::post('abandoned-orders/{order}/confirm-payment', [AbandonedOrderController::class, 'confirmPayment'])->name('abandoned-orders.confirm-payment');
         });
 
         Route::middleware('permission:customers')->group(function () {

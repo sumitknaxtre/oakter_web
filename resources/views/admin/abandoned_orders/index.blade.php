@@ -11,6 +11,10 @@
     <a class="admin-link-button secondary" href="{{ $exportUrl }}">Export CSV</a>
   </div>
 
+  @if ($errors->has('payment'))
+    <div class="admin-alert">{{ $errors->first('payment') }}</div>
+  @endif
+
   <form class="admin-filters" method="get" action="{{ route('admin.abandoned-orders.index') }}">
     <input
       type="search"
@@ -36,6 +40,7 @@
             <th>Payment</th>
             <th>Razorpay order</th>
             <th>Date</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -55,10 +60,16 @@
               <td>{{ $order->paymentStatusLabel() }}</td>
               <td>{{ $order->razorpay_order_id }}</td>
               <td>{{ $order->created_at->format('d M Y, h:i A') }}</td>
+              <td>
+                <form method="post" action="{{ route('admin.abandoned-orders.confirm-payment', $order) }}">
+                  @csrf
+                  <button class="admin-link-button" type="submit">Confirm payment</button>
+                </form>
+              </td>
             </tr>
           @empty
             <tr class="admin-table-empty">
-              <td colspan="7">No abandoned orders found.</td>
+              <td colspan="8">No abandoned orders found.</td>
             </tr>
           @endforelse
         </tbody>

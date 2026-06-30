@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\Order;
 use App\Services\Checkout\CheckoutPaymentCompletionService;
 use Illuminate\Console\Command;
-use Razorpay\Api\Api;
 
 class ReconcilePendingPaymentsCommand extends Command
 {
@@ -44,11 +43,10 @@ class ReconcilePendingPaymentsCommand extends Command
             return self::SUCCESS;
         }
 
-        $api = new Api(config('razorpay.key_id'), config('razorpay.key_secret'));
         $reconciled = 0;
 
         foreach ($orders as $order) {
-            $paymentId = $this->findCapturedPaymentId($api, (string) $order->razorpay_order_id);
+            $paymentId = $paymentCompletionService->findCapturedPaymentId((string) $order->razorpay_order_id);
 
             if ($paymentId === null) {
                 $this->line("Order #{$order->id}: no captured payment on Razorpay.");
@@ -62,10 +60,7 @@ class ReconcilePendingPaymentsCommand extends Command
                 continue;
             }
 
-            $result = $paymentCompletionService->completeFromRazorpayPayment(
-                (string) $order->razorpay_order_id,
-                $paymentId,
-            );
+            $result = $paymentCompletionService->reconcilePendingOrder($order);
 
             if ($result->success) {
                 $reconciled++;
@@ -80,40 +75,5 @@ class ReconcilePendingPaymentsCommand extends Command
         }
 
         return self::SUCCESS;
-    }
-
-    private function findCapturedPaymentId(Api $api, string $razorpayOrderId): ?string
-    {
-        try {
-            $razorpayOrder = $api->order->fetch($razorpayOrderId)->toArray();
-        } catch (\Throwable $exception) {
-            report($exception);
-
-            return null;
-        }
-
-        if (($razorpayOrder['status'] ?? '') !== 'paid') {
-            return null;
-        }
-
-        try {
-            $payments = $api->order->fetch($razorpayOrderId)->payments()->toArray();
-        } catch (\Throwable $exception) {
-            report($exception);
-
-            return null;
-        }
-
-        foreach ($payments['items'] ?? [] as $payment) {
-            if (! is_array($payment)) {
-                continue;
-            }
-
-            if (in_array($payment['status'] ?? '', ['captured', 'authorized'], true)) {
-                return $payment['id'] ?? null;
-            }
-        }
-
-        return null;
     }
 }

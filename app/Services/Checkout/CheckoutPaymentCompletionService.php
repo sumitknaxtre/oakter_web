@@ -5,17 +5,15 @@ namespace App\Services\Checkout;
 use App\Jobs\SyncOrderToUnicommerceJob;
 use App\Models\Coupon;
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\User;
 use App\Services\CouponService;
 use App\Services\Meta\MetaPurchaseEventService;
 use App\Support\OrderAttribution;
-use App\Support\OrderFulfillmentStatus;
 use App\Support\OrderPaymentStatus;
 use App\Support\RazorpayPaymentMethod;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 use Razorpay\Api\Api;
 use Razorpay\Api\Errors\SignatureVerificationError;
 
@@ -36,9 +34,7 @@ class CheckoutPaymentCompletionService
         ?string $userAgent = null,
         ?string $eventSourceUrl = null,
     ): CheckoutPaymentCompletionResult {
-        $order = Order::query()
-            ->where('razorpay_order_id', $razorpayOrderId)
-            ->first();
+        $order = $this->findPendingOrder($razorpayOrderId);
 
         if ($order === null) {
             return CheckoutPaymentCompletionResult::failed('Checkout session expired. Please try again.');
@@ -60,7 +56,7 @@ class CheckoutPaymentCompletionService
             return CheckoutPaymentCompletionResult::failed('Payment verification failed.');
         }
 
-        return $this->completeCapturedPayment(
+        return $this->markOrderPaid(
             $order,
             $razorpayPaymentId,
             $razorpaySignature,
@@ -80,9 +76,7 @@ class CheckoutPaymentCompletionService
         ?string $userAgent = null,
         ?string $eventSourceUrl = null,
     ): CheckoutPaymentCompletionResult {
-        $order = Order::query()
-            ->where('razorpay_order_id', $razorpayOrderId)
-            ->first();
+        $order = $this->findPendingOrder($razorpayOrderId);
 
         if ($order === null) {
             return CheckoutPaymentCompletionResult::failed('Order not found for Razorpay order.');
@@ -114,7 +108,7 @@ class CheckoutPaymentCompletionService
             return CheckoutPaymentCompletionResult::failed('Order amount mismatch.');
         }
 
-        return $this->completeCapturedPayment(
+        return $this->markOrderPaid(
             $order,
             $razorpayPaymentId,
             null,
@@ -127,7 +121,66 @@ class CheckoutPaymentCompletionService
         );
     }
 
-    private function completeCapturedPayment(
+    public function reconcilePendingOrder(Order $order): CheckoutPaymentCompletionResult
+    {
+        if ($order->isPaid()) {
+            return CheckoutPaymentCompletionResult::alreadyPaid($order);
+        }
+
+        if (! is_string($order->razorpay_order_id) || $order->razorpay_order_id === '') {
+            return CheckoutPaymentCompletionResult::failed('This order has no Razorpay order ID.');
+        }
+
+        $paymentId = $this->findCapturedPaymentId($order->razorpay_order_id);
+
+        if ($paymentId === null) {
+            return CheckoutPaymentCompletionResult::failed('No captured payment found on Razorpay for this order.');
+        }
+
+        return $this->completeFromRazorpayPayment(
+            $order->razorpay_order_id,
+            $paymentId,
+        );
+    }
+
+    public function findCapturedPaymentId(string $razorpayOrderId): ?string
+    {
+        $api = $this->api();
+
+        try {
+            $razorpayOrder = $api->order->fetch($razorpayOrderId)->toArray();
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return null;
+        }
+
+        if (($razorpayOrder['status'] ?? '') !== 'paid') {
+            return null;
+        }
+
+        try {
+            $payments = $api->order->fetch($razorpayOrderId)->payments()->toArray();
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return null;
+        }
+
+        foreach ($payments['items'] ?? [] as $payment) {
+            if (! is_array($payment)) {
+                continue;
+            }
+
+            if (in_array($payment['status'] ?? '', ['captured', 'authorized'], true)) {
+                return $payment['id'] ?? null;
+            }
+        }
+
+        return null;
+    }
+
+    private function markOrderPaid(
         Order $order,
         string $razorpayPaymentId,
         ?string $razorpaySignature,
@@ -144,46 +197,16 @@ class CheckoutPaymentCompletionService
             return CheckoutPaymentCompletionResult::alreadyPaid($order);
         }
 
-        $dbProduct = Product::query()->find($order->product_id);
-
-        if ($dbProduct === null) {
-            return CheckoutPaymentCompletionResult::failed('Product for this order is no longer available.');
-        }
-
-        try {
-            $dbProduct->ensureInStock();
-        } catch (ValidationException $exception) {
-            return CheckoutPaymentCompletionResult::failed(
-                $exception->errors()['product'][0] ?? 'Product is out of stock.',
-            );
-        }
-
         $coupon = $order->coupon_id
-            ? Coupon::query()->with('products')->find($order->coupon_id)
+            ? Coupon::query()->find($order->coupon_id)
             : null;
-
-        if ($coupon !== null) {
-            try {
-                $this->couponService->assertApplicable($coupon, $dbProduct);
-            } catch (ValidationException) {
-                return CheckoutPaymentCompletionResult::failed(
-                    'The applied coupon is no longer valid. Please contact support.',
-                );
-            }
-        }
-
-        $pricing = $this->couponService->calculatePricing($dbProduct, $coupon);
-
-        if ($pricing['amount_paise'] !== $order->amount_paise) {
-            return CheckoutPaymentCompletionResult::failed('Order amount mismatch. Please contact support.');
-        }
 
         $paymentMethod = $this->resolvePaymentMethod($api, $razorpayPaymentId);
         $metaEventId = is_string($order->meta_event_id) && $order->meta_event_id !== ''
             ? $order->meta_event_id
             : (string) Str::uuid();
 
-        DB::transaction(function () use ($order, $pricing, $coupon, $razorpayPaymentId, $razorpaySignature, $paymentMethod, $metaEventId, $fbp, $fbc) {
+        DB::transaction(function () use ($order, $coupon, $razorpayPaymentId, $razorpaySignature, $paymentMethod, $metaEventId, $fbp, $fbc) {
             $order->refresh();
 
             if ($order->isPaid()) {
@@ -191,7 +214,7 @@ class CheckoutPaymentCompletionService
             }
 
             $order->update([
-                'tax_amount' => Order::calculateInclusiveTaxPaise($pricing['amount_paise']),
+                'tax_amount' => Order::calculateInclusiveTaxPaise($order->amount_paise),
                 'coupon_id' => $coupon?->id,
                 'status' => 'paid',
                 'payment_status' => OrderPaymentStatus::Paid,
@@ -220,7 +243,12 @@ class CheckoutPaymentCompletionService
         $order->refresh();
 
         if (! $order->isPaid()) {
-            return CheckoutPaymentCompletionResult::alreadyPaid($order);
+            Log::error('Checkout payment completion failed after transaction.', [
+                'order_id' => $order->id,
+                'razorpay_payment_id' => $razorpayPaymentId,
+            ]);
+
+            return CheckoutPaymentCompletionResult::failed('Unable to mark order as paid.');
         }
 
         if (config('unicommerce.enabled')) {
@@ -236,7 +264,20 @@ class CheckoutPaymentCompletionService
             $eventSourceUrl ?? route('website.checkout.success', $order),
         );
 
+        Log::info('Checkout payment completed.', [
+            'order_id' => $order->id,
+            'razorpay_order_id' => $order->razorpay_order_id,
+            'razorpay_payment_id' => $razorpayPaymentId,
+        ]);
+
         return CheckoutPaymentCompletionResult::paid($order);
+    }
+
+    private function findPendingOrder(string $razorpayOrderId): ?Order
+    {
+        return Order::query()
+            ->where('razorpay_order_id', $razorpayOrderId)
+            ->first();
     }
 
     private function api(): Api
