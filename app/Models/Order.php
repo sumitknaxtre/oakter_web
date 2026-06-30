@@ -123,6 +123,25 @@ class Order extends Model
             && $this->razorpay_payment_id !== '';
     }
 
+    public function canResyncToUnicommerce(): bool
+    {
+        if (! config('unicommerce.enabled')) {
+            return false;
+        }
+
+        if (! $this->isPaid() || $this->isCancelled()) {
+            return false;
+        }
+
+        if ($this->unicommerce_sync_status === UnicommerceSyncStatus::Synced) {
+            return false;
+        }
+
+        $sku = $this->product?->sku;
+
+        return is_string($sku) && $sku !== '';
+    }
+
     public function isViewableInAdmin(): bool
     {
         return $this->isPaid() || $this->isRefunded();

@@ -12,7 +12,7 @@
   </div>
 
   <section class="admin-panel" style="padding: 20px;">
-    <form class="admin-form" method="post" action="{{ route('admin.coupons.update', $coupon) }}">
+    <form class="admin-form admin-form-wide" method="post" action="{{ route('admin.coupons.update', $coupon) }}">
       @csrf
       @method('PUT')
       @include('admin.coupons._form')

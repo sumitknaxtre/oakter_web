@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UpdateOrderCustomerRequest;
 use App\Models\Order;
 use App\Services\AdminOrderCancellationService;
 use App\Services\AdminOrderCustomerService;
+use App\Services\Unicommerce\UnicommerceOrderSyncService;
 use App\Support\AdminOrderFilters;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -100,9 +101,34 @@ class OrderController extends Controller
     {
         abort_unless($order->isViewableInAdmin(), 404);
 
-        $order->load('user');
+        $order->load(['user', 'product']);
 
         return view('admin.orders.show', compact('order'));
+    }
+
+    public function resyncUnicommerce(Order $order, UnicommerceOrderSyncService $syncService): RedirectResponse
+    {
+        abort_unless($order->isViewableInAdmin(), 404);
+
+        $order->load('product');
+
+        if (! $order->canResyncToUnicommerce()) {
+            return redirect()
+                ->route('admin.orders.show', $order)
+                ->withErrors(['unicommerce' => 'This order cannot be synced to Uniware.']);
+        }
+
+        try {
+            $syncService->sync($order);
+        } catch (\Throwable $exception) {
+            return redirect()
+                ->route('admin.orders.show', $order)
+                ->withErrors(['unicommerce' => $exception->getMessage()]);
+        }
+
+        return redirect()
+            ->route('admin.orders.show', $order)
+            ->with('status', 'Order synced to Uniware successfully.');
     }
 
     public function cancel(Order $order): RedirectResponse

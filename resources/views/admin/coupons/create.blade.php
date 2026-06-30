@@ -12,7 +12,7 @@
   </div>
 
   <section class="admin-panel" style="padding: 20px;">
-    <form class="admin-form" method="post" action="{{ route('admin.coupons.store') }}">
+    <form class="admin-form admin-form-wide" method="post" action="{{ route('admin.coupons.store') }}">
       @csrf
       @include('admin.coupons._form')
       <button class="admin-button" type="submit">Create coupon</button>

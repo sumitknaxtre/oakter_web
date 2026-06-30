@@ -27,6 +27,16 @@
         </form>
       @endif
       --}}
+      @if ($order->canResyncToUnicommerce())
+        <form
+          method="post"
+          action="{{ route('admin.orders.unicommerce.resync', $order) }}"
+          onsubmit="return confirm('Send this order to Uniware again?');"
+        >
+          @csrf
+          <button class="admin-link-button" type="submit">Re-sync to Uniware</button>
+        </form>
+      @endif
       @if (! $order->isCancelled())
         <a class="admin-link-button" href="{{ route('admin.orders.customer.edit', $order) }}">Edit customer</a>
       @endif
@@ -34,6 +44,10 @@
   </div>
 
   @error('cancel')
+    <div class="admin-alert" style="margin-bottom:16px;background:#fef3f2;color:#912018;">{{ $message }}</div>
+  @enderror
+
+  @error('unicommerce')
     <div class="admin-alert" style="margin-bottom:16px;background:#fef3f2;color:#912018;">{{ $message }}</div>
   @enderror
 
@@ -48,6 +62,22 @@
         <p><strong>Name:</strong> {{ $order->customer_name }}</p>
         <p><strong>Email:</strong> {{ $order->user?->email ?? '—' }}</p>
         <p><strong>Phone:</strong> {{ $order->phone ?? '—' }}</p>
+
+        <h4 class="admin-detail-subheading">Shipping address</h4>
+        <p>{{ $shipping['address_line1'] ?? '—' }}</p>
+        @if (! empty($shipping['address_line2']))<p>{{ $shipping['address_line2'] }}</p>@endif
+        <p>{{ $shipping['city'] ?? '' }}, {{ $shipping['state'] ?? '' }} {{ $shipping['pincode'] ?? '' }}</p>
+        <p>{{ $shipping['country'] ?? '' }}</p>
+
+        <h4 class="admin-detail-subheading">Billing address</h4>
+        @if ($order->billing_same_as_shipping)
+          <p>Same as shipping address</p>
+        @else
+          <p>{{ $billing['address_line1'] ?? '—' }}</p>
+          @if (! empty($billing['address_line2']))<p>{{ $billing['address_line2'] }}</p>@endif
+          <p>{{ $billing['city'] ?? '' }}, {{ $billing['state'] ?? '' }} {{ $billing['pincode'] ?? '' }}</p>
+          <p>{{ $billing['country'] ?? '' }}</p>
+        @endif
       </article>
 
       <article>
@@ -85,14 +115,6 @@
       </article>
 
       <article>
-        <h3>Shipping address</h3>
-        <p>{{ $shipping['address_line1'] ?? '—' }}</p>
-        @if (! empty($shipping['address_line2']))<p>{{ $shipping['address_line2'] }}</p>@endif
-        <p>{{ $shipping['city'] ?? '' }}, {{ $shipping['state'] ?? '' }} {{ $shipping['pincode'] ?? '' }}</p>
-        <p>{{ $shipping['country'] ?? '' }}</p>
-      </article>
-
-      <article>
         <h3>Traffic source</h3>
         <p><strong>Channel:</strong> {{ $order->attributionLabel() }}</p>
         @forelse ($order->attributionDetails() as $row)
@@ -104,18 +126,6 @@
         @endforelse
         @if ($order->meta_event_id)
           <p><strong>Meta event ID:</strong> {{ $order->meta_event_id }}</p>
-        @endif
-      </article>
-
-      <article>
-        <h3>Billing address</h3>
-        @if ($order->billing_same_as_shipping)
-          <p>Same as shipping address</p>
-        @else
-          <p>{{ $billing['address_line1'] ?? '—' }}</p>
-          @if (! empty($billing['address_line2']))<p>{{ $billing['address_line2'] }}</p>@endif
-          <p>{{ $billing['city'] ?? '' }}, {{ $billing['state'] ?? '' }} {{ $billing['pincode'] ?? '' }}</p>
-          <p>{{ $billing['country'] ?? '' }}</p>
         @endif
       </article>
     </div>
