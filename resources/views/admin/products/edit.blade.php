@@ -25,7 +25,7 @@
           value="{{ old('sku', $product->sku) }}"
           maxlength="100"
         />
-        <p class="admin-muted">Must match the item SKU in Uniware for order sync.</p>
+        <p class="admin-muted">Must match the Uniware catalog SKU code (e.g. 27704), not the channel listing title.</p>
         @error('sku')<p class="admin-error">{{ $message }}</p>@enderror
       </div>
 

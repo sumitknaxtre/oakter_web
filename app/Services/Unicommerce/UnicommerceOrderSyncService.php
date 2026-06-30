@@ -54,25 +54,25 @@ class UnicommerceOrderSyncService
      */
     private function formatErrorMessage(array $response): string
     {
-        $message = $response['message'] ?? 'Unicommerce sale order creation failed.';
-
         $errors = $response['errors'] ?? [];
 
-        if (! is_array($errors) || $errors === []) {
-            return (string) $message;
+        if (is_array($errors) && $errors !== []) {
+            $details = collect($errors)
+                ->map(function ($error) {
+                    if (! is_array($error)) {
+                        return null;
+                    }
+
+                    return trim((string) ($error['description'] ?? $error['message'] ?? ''));
+                })
+                ->filter()
+                ->implode(' | ');
+
+            if ($details !== '') {
+                return $details;
+            }
         }
 
-        $details = collect($errors)
-            ->map(function ($error) {
-                if (! is_array($error)) {
-                    return null;
-                }
-
-                return trim(($error['message'] ?? $error['description'] ?? '').' '.($error['fieldName'] ?? ''));
-            })
-            ->filter()
-            ->implode(' | ');
-
-        return $details !== '' ? $message.' '.$details : (string) $message;
+        return (string) ($response['message'] ?? 'Unicommerce sale order creation failed.');
     }
 }

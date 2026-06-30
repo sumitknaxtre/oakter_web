@@ -47,9 +47,6 @@ class UnicommerceOrderMapper
                 'cashOnDelivery' => false,
                 'paymentInstrument' => $this->paymentInstrument($order->payment_method),
                 'currencyCode' => $order->currency,
-                'totalDiscount' => $discount,
-                'totalShippingCharges' => $shippingCharges,
-                'totalPrepaidAmount' => $amount,
                 'addresses' => [
                     $this->addressPayload(self::SHIPPING_ADDRESS_ID, $shipping, $order),
                     $this->addressPayload(self::BILLING_ADDRESS_ID, $billing, $order),
