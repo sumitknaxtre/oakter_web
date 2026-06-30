@@ -18,10 +18,6 @@ Route::post('/checkout/payment/verify', [CheckoutController::class, 'verify'])->
 Route::get('/checkout/payment/callback', [CheckoutController::class, 'paymentCallback'])->name('website.checkout.callback');
 Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('website.checkout.success');
 
-Route::post('/razorpay/webhook', \App\Http\Controllers\RazorpayWebhookController::class)
-    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class])
-    ->name('razorpay.webhook');
-
 // Old routes (SEO)
 Route::redirect('/b2b-products', '/collections/all', 301)->name('website.b2b');
 // Redirect form pages to oakter.co.in
