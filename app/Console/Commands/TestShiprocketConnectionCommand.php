@@ -13,10 +13,14 @@ class TestShiprocketConnectionCommand extends Command
 
     public function handle(ShiprocketClient $client): int
     {
-        if (! config('shiprocket.enabled')) {
-            $this->warn('Shiprocket is disabled. Set SHIPROCKET_ENABLED=true to enable sync.');
+        $this->line('Enabled: '.(config('shiprocket.enabled') ? 'yes' : 'no'));
+        $this->line('Pickup location: '.(config('shiprocket.pickup_location') ?: '(not set)'));
+        $this->line('API email: '.(config('shiprocket.email') ?: '(not set)'));
 
-            return self::SUCCESS;
+        if (! config('shiprocket.enabled')) {
+            $this->warn('Shiprocket is disabled. Set SHIPROCKET_ENABLED=true in .env, then run config:cache and queue:restart.');
+
+            return self::FAILURE;
         }
 
         try {

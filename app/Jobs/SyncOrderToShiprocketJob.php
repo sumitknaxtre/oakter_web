@@ -6,11 +6,12 @@ use App\Models\Order;
 use App\Services\Shiprocket\ShiprocketOrderSyncService;
 use App\Support\ShiprocketSyncStatus;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class SyncOrderToShiprocketJob implements ShouldQueue
+class SyncOrderToShiprocketJob implements ShouldQueue, ShouldQueueAfterCommit
 {
     use Queueable;
 
@@ -31,12 +32,31 @@ class SyncOrderToShiprocketJob implements ShouldQueue
     public function handle(ShiprocketOrderSyncService $syncService): void
     {
         if (! config('shiprocket.enabled')) {
+            Log::warning('Shiprocket sync skipped because integration is disabled in the queue worker.', [
+                'order_id' => $this->orderId,
+                'hint' => 'Set SHIPROCKET_ENABLED=true, then run: php artisan config:cache && php artisan queue:restart',
+            ]);
+
             return;
         }
 
         $order = Order::query()->find($this->orderId);
 
-        if ($order === null || ! $order->isPaid() || $order->isCancelled()) {
+        if ($order === null) {
+            Log::warning('Shiprocket sync skipped because order was not found.', [
+                'order_id' => $this->orderId,
+            ]);
+
+            return;
+        }
+
+        if (! $order->isPaid() || $order->isCancelled()) {
+            Log::warning('Shiprocket sync skipped because order is not eligible.', [
+                'order_id' => $this->orderId,
+                'payment_status' => $order->payment_status,
+                'fulfillment_status' => $order->fulfillment_status,
+            ]);
+
             return;
         }
 
@@ -45,6 +65,12 @@ class SyncOrderToShiprocketJob implements ShouldQueue
         }
 
         $syncService->sync($order);
+
+        Log::info('Shiprocket order sync completed.', [
+            'order_id' => $order->id,
+            'shiprocket_order_id' => $order->fresh()->shiprocket_order_id,
+            'shiprocket_reference' => $order->shiprocket_reference,
+        ]);
     }
 
     public function failed(?Throwable $exception): void

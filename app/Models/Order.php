@@ -162,7 +162,9 @@ class Order extends Model
             return false;
         }
 
-        return in_array($this->shiprocket_sync_status, [
+        $status = $this->shiprocket_sync_status ?? ShiprocketSyncStatus::Pending;
+
+        return in_array($status, [
             ShiprocketSyncStatus::Pending,
             ShiprocketSyncStatus::Failed,
         ], true);

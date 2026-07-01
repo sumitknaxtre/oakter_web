@@ -116,6 +116,7 @@
         <p><strong>Shiprocket sync:</strong> {{ $order->shiprocketSyncStatusLabel() }}</p>
         <p><strong>Shiprocket reference:</strong> {{ $order->shiprocket_reference ?? '—' }}</p>
         <p><strong>Shiprocket order ID:</strong> {{ $order->shiprocket_order_id ?? '—' }}</p>
+        <p><strong>Shiprocket shipment ID:</strong> {{ $order->shiprocket_shipment_id ?? '—' }}</p>
         @if ($order->shiprocket_synced_at)
           <p><strong>Shiprocket synced at:</strong> {{ $order->shiprocket_synced_at->format('d M Y, h:i A') }}</p>
         @endif
