@@ -27,10 +27,17 @@ class SyncOrderToShiprocketJob implements ShouldQueue, ShouldQueueAfterCommit
 
     public function __construct(
         public readonly int $orderId,
+        public readonly ?string $pickupLocation = null,
     ) {}
 
     public function handle(ShiprocketOrderSyncService $syncService): void
     {
+        $pickupLocation = $this->pickupLocation ?? config('shiprocket.pickup_location');
+
+        if (is_string($pickupLocation) && $pickupLocation !== '') {
+            config(['shiprocket.pickup_location' => $pickupLocation]);
+        }
+
         if (! config('shiprocket.enabled')) {
             Log::warning('Shiprocket sync skipped because integration is disabled in the queue worker.', [
                 'order_id' => $this->orderId,
@@ -68,6 +75,7 @@ class SyncOrderToShiprocketJob implements ShouldQueue, ShouldQueueAfterCommit
 
         Log::info('Shiprocket order sync completed.', [
             'order_id' => $order->id,
+            'pickup_location' => config('shiprocket.pickup_location'),
             'shiprocket_order_id' => $order->fresh()->shiprocket_order_id,
             'shiprocket_reference' => $order->shiprocket_reference,
         ]);
@@ -92,6 +100,7 @@ class SyncOrderToShiprocketJob implements ShouldQueue, ShouldQueueAfterCommit
 
         Log::error('Shiprocket order sync failed.', [
             'order_id' => $this->orderId,
+            'pickup_location' => $this->pickupLocation ?? config('shiprocket.pickup_location'),
             'message' => $exception?->getMessage(),
         ]);
     }

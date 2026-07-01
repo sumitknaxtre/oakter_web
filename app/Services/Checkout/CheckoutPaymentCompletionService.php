@@ -257,7 +257,10 @@ class CheckoutPaymentCompletionService
         }
 
         if (config('shiprocket.enabled')) {
-            SyncOrderToShiprocketJob::dispatch($order->id);
+            SyncOrderToShiprocketJob::dispatch(
+                $order->id,
+                config('shiprocket.pickup_location'),
+            );
         }
 
         $this->metaPurchaseEventService->dispatchPurchase(
