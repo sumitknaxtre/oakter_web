@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\CancelOrderInShiprocketJob;
 use App\Models\Order;
 use App\Support\OrderFulfillmentStatus;
 use App\Support\OrderPaymentStatus;
@@ -65,6 +66,10 @@ class AdminOrderCancellationService
                 'refunded_at' => $now,
             ]);
         });
+
+        if (config('shiprocket.enabled')) {
+            CancelOrderInShiprocketJob::dispatch($order->id);
+        }
     }
 
     private function refundErrorMessage(\Throwable $exception): string

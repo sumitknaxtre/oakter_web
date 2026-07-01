@@ -2,6 +2,7 @@
 
 namespace App\Services\Checkout;
 
+use App\Jobs\SyncOrderToShiprocketJob;
 use App\Jobs\SyncOrderToUnicommerceJob;
 use App\Models\Coupon;
 use App\Models\Order;
@@ -253,6 +254,10 @@ class CheckoutPaymentCompletionService
 
         if (config('unicommerce.enabled')) {
             SyncOrderToUnicommerceJob::dispatch($order->id);
+        }
+
+        if (config('shiprocket.enabled')) {
+            SyncOrderToShiprocketJob::dispatch($order->id);
         }
 
         $this->metaPurchaseEventService->dispatchPurchase(

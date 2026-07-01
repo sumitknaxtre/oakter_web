@@ -36,6 +36,16 @@
           <button class="admin-link-button" type="submit">Re-sync to Uniware</button>
         </form>
       @endif
+      @if ($order->canResyncToShiprocket())
+        <form
+          method="post"
+          action="{{ route('admin.orders.shiprocket.resync', $order) }}"
+          onsubmit="return confirm('Send this order to Shiprocket again?');"
+        >
+          @csrf
+          <button class="admin-link-button" type="submit">Re-sync to Shiprocket</button>
+        </form>
+      @endif
       @if (! $order->isCancelled())
         <a class="admin-link-button" href="{{ route('admin.orders.customer.edit', $order) }}">Edit customer</a>
       @endif
@@ -47,6 +57,10 @@
   @enderror
 
   @error('unicommerce')
+    <div class="admin-alert" style="margin-bottom:16px;background:#fef3f2;color:#912018;">{{ $message }}</div>
+  @enderror
+
+  @error('shiprocket')
     <div class="admin-alert" style="margin-bottom:16px;background:#fef3f2;color:#912018;">{{ $message }}</div>
   @enderror
 
@@ -97,7 +111,19 @@
           <p><strong>Synced at:</strong> {{ $order->unicommerce_synced_at->format('d M Y, h:i A') }}</p>
         @endif
         @if ($order->unicommerce_last_error)
-          <p><strong>Sync error:</strong> {{ $order->unicommerce_last_error }}</p>
+          <p><strong>Uniware sync error:</strong> {{ $order->unicommerce_last_error }}</p>
+        @endif
+        <p><strong>Shiprocket sync:</strong> {{ $order->shiprocketSyncStatusLabel() }}</p>
+        <p><strong>Shiprocket reference:</strong> {{ $order->shiprocket_reference ?? '—' }}</p>
+        <p><strong>Shiprocket order ID:</strong> {{ $order->shiprocket_order_id ?? '—' }}</p>
+        @if ($order->shiprocket_synced_at)
+          <p><strong>Shiprocket synced at:</strong> {{ $order->shiprocket_synced_at->format('d M Y, h:i A') }}</p>
+        @endif
+        @if ($order->shiprocket_cancelled_at)
+          <p><strong>Shiprocket cancelled at:</strong> {{ $order->shiprocket_cancelled_at->format('d M Y, h:i A') }}</p>
+        @endif
+        @if ($order->shiprocket_last_error)
+          <p><strong>Shiprocket sync error:</strong> {{ $order->shiprocket_last_error }}</p>
         @endif
         <p><strong>Razorpay order:</strong> {{ $order->razorpay_order_id ?? '—' }}</p>
         <p><strong>Payment ID:</strong> {{ $order->razorpay_payment_id ?? '—' }}</p>

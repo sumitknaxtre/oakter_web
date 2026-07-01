@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UpdateOrderCustomerRequest;
 use App\Models\Order;
 use App\Services\AdminOrderCancellationService;
 use App\Services\AdminOrderCustomerService;
+use App\Services\Shiprocket\ShiprocketOrderSyncService;
 use App\Services\Unicommerce\UnicommerceOrderSyncService;
 use App\Support\AdminOrderFilters;
 use Illuminate\Http\RedirectResponse;
@@ -129,6 +130,31 @@ class OrderController extends Controller
         return redirect()
             ->route('admin.orders.show', $order)
             ->with('status', 'Order synced to Uniware successfully.');
+    }
+
+    public function resyncShiprocket(Order $order, ShiprocketOrderSyncService $syncService): RedirectResponse
+    {
+        abort_unless($order->isViewableInAdmin(), 404);
+
+        $order->load('user');
+
+        if (! $order->canResyncToShiprocket()) {
+            return redirect()
+                ->route('admin.orders.show', $order)
+                ->withErrors(['shiprocket' => 'This order cannot be synced to Shiprocket.']);
+        }
+
+        try {
+            $syncService->sync($order);
+        } catch (\Throwable $exception) {
+            return redirect()
+                ->route('admin.orders.show', $order)
+                ->withErrors(['shiprocket' => $exception->getMessage()]);
+        }
+
+        return redirect()
+            ->route('admin.orders.show', $order)
+            ->with('status', 'Order synced to Shiprocket successfully.');
     }
 
     public function cancel(Order $order): RedirectResponse

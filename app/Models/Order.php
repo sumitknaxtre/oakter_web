@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Support\OrderAttribution;
 use App\Support\OrderFulfillmentStatus;
 use App\Support\OrderPaymentStatus;
+use App\Support\ShiprocketSyncStatus;
 use App\Support\UnicommerceSyncStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -37,6 +38,13 @@ class Order extends Model
         'unicommerce_sync_status',
         'unicommerce_synced_at',
         'unicommerce_last_error',
+        'shiprocket_reference',
+        'shiprocket_order_id',
+        'shiprocket_shipment_id',
+        'shiprocket_sync_status',
+        'shiprocket_synced_at',
+        'shiprocket_cancelled_at',
+        'shiprocket_last_error',
         'razorpay_order_id',
         'razorpay_payment_id',
         'razorpay_signature',
@@ -63,6 +71,8 @@ class Order extends Model
             'refunded_at' => 'datetime',
             'meta_purchase_sent_at' => 'datetime',
             'unicommerce_synced_at' => 'datetime',
+            'shiprocket_synced_at' => 'datetime',
+            'shiprocket_cancelled_at' => 'datetime',
         ];
     }
 
@@ -140,6 +150,27 @@ class Order extends Model
         $sku = $this->product?->sku;
 
         return is_string($sku) && $sku !== '';
+    }
+
+    public function canResyncToShiprocket(): bool
+    {
+        if (! config('shiprocket.enabled')) {
+            return false;
+        }
+
+        if (! $this->isPaid() || $this->isCancelled()) {
+            return false;
+        }
+
+        return in_array($this->shiprocket_sync_status, [
+            ShiprocketSyncStatus::Pending,
+            ShiprocketSyncStatus::Failed,
+        ], true);
+    }
+
+    public function shiprocketSyncStatusLabel(): string
+    {
+        return ShiprocketSyncStatus::label((string) $this->shiprocket_sync_status);
     }
 
     public function isViewableInAdmin(): bool

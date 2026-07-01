@@ -15,6 +15,10 @@ class Product extends Model
         'slug',
         'config_key',
         'sku',
+        'package_weight_kg',
+        'package_length_cm',
+        'package_breadth_cm',
+        'package_height_cm',
         'name',
         'amount_paise',
         'currency',
@@ -29,6 +33,10 @@ class Product extends Model
             'catalog' => 'array',
             'is_active' => 'boolean',
             'is_in_stock' => 'boolean',
+            'package_weight_kg' => 'float',
+            'package_length_cm' => 'float',
+            'package_breadth_cm' => 'float',
+            'package_height_cm' => 'float',
         ];
     }
 
@@ -156,6 +164,10 @@ class Product extends Model
             'slug' => $this->slug,
             'config_key' => $this->config_key,
             'sku' => $this->sku,
+            'package_weight_kg' => $this->package_weight_kg,
+            'package_length_cm' => $this->package_length_cm,
+            'package_breadth_cm' => $this->package_breadth_cm,
+            'package_height_cm' => $this->package_height_cm,
             'name' => $this->name,
             'amount_paise' => $this->amount_paise,
             'currency' => $this->currency,

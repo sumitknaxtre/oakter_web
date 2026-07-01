@@ -73,6 +73,71 @@
         @error('is_in_stock')<p class="admin-error">{{ $message }}</p>@enderror
       </div>
 
+      <x-admin.form-section title="Shiprocket package details">
+        <p class="admin-muted" style="margin-bottom: 16px;">
+          Dead weight and box dimensions sent to Shiprocket when an order is created.
+          Volumetric and applied weight are calculated by Shiprocket automatically.
+        </p>
+
+        <x-admin.form-row :cols="2">
+          <div class="admin-field">
+            <label for="package_weight_kg">Dead weight (kg)</label>
+            <input
+              id="package_weight_kg"
+              type="number"
+              name="package_weight_kg"
+              min="0.01"
+              step="0.001"
+              value="{{ old('package_weight_kg', $product->package_weight_kg) }}"
+              required
+            />
+            @error('package_weight_kg')<p class="admin-error">{{ $message }}</p>@enderror
+          </div>
+
+          <div class="admin-field">
+            <label for="package_length_cm">Length (cm)</label>
+            <input
+              id="package_length_cm"
+              type="number"
+              name="package_length_cm"
+              min="0.5"
+              step="0.01"
+              value="{{ old('package_length_cm', $product->package_length_cm) }}"
+              required
+            />
+            @error('package_length_cm')<p class="admin-error">{{ $message }}</p>@enderror
+          </div>
+
+          <div class="admin-field">
+            <label for="package_breadth_cm">Breadth (cm)</label>
+            <input
+              id="package_breadth_cm"
+              type="number"
+              name="package_breadth_cm"
+              min="0.5"
+              step="0.01"
+              value="{{ old('package_breadth_cm', $product->package_breadth_cm) }}"
+              required
+            />
+            @error('package_breadth_cm')<p class="admin-error">{{ $message }}</p>@enderror
+          </div>
+
+          <div class="admin-field">
+            <label for="package_height_cm">Height (cm)</label>
+            <input
+              id="package_height_cm"
+              type="number"
+              name="package_height_cm"
+              min="0.5"
+              step="0.01"
+              value="{{ old('package_height_cm', $product->package_height_cm) }}"
+              required
+            />
+            @error('package_height_cm')<p class="admin-error">{{ $message }}</p>@enderror
+          </div>
+        </x-admin.form-row>
+      </x-admin.form-section>
+
       <button class="admin-button" type="submit">Save product</button>
     </form>
   </section>

@@ -16,6 +16,7 @@ use App\Support\OrderAttribution;
 use App\Support\ProductCatalog;
 use App\Support\OrderFulfillmentStatus;
 use App\Support\OrderPaymentStatus;
+use App\Support\ShiprocketSyncStatus;
 use App\Support\UnicommerceSyncStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -165,6 +166,7 @@ class CheckoutController extends Controller
             'payment_status' => OrderPaymentStatus::Pending,
             'fulfillment_status' => OrderFulfillmentStatus::Pending,
             'unicommerce_sync_status' => UnicommerceSyncStatus::Pending,
+            'shiprocket_sync_status' => ShiprocketSyncStatus::Pending,
             'razorpay_order_id' => $razorpayOrder['id'],
             'attribution' => $this->buildOrderAttribution($request),
         ]);
