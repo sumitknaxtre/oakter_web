@@ -31,6 +31,7 @@
             set-top boxes so work, classes, streaming and payments do not stop during short power outages.
           </p>
           <p>The choice for routers that operate on 12VDC.</p>
+          <p>Available variants - Basic | 12V | Pro | Plus</p>
         </div>
         <div class="product-buy-bar">
           <div class="price-row">
