@@ -648,6 +648,11 @@
     background: #ffedd5;
 }
 
+.admin-stock-badge.hidden-buy {
+    color: #374151;
+    background: #e5e7eb;
+}
+
 .admin-customer-list-cell {
     display: grid;
     gap: 2px;

@@ -37,7 +37,9 @@
               </td>
               <td>{{ $product->slug }}</td>
               <td>
-                @if ($product->is_in_stock)
+                @if ($product->hide_buy_button)
+                  <span class="admin-stock-badge hidden-buy">Buy hidden</span>
+                @elseif ($product->is_in_stock)
                   <span class="admin-stock-badge in-stock">In stock</span>
                 @else
                   <span class="admin-stock-badge out-of-stock">Out of stock</span>

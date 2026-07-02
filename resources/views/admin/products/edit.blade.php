@@ -69,8 +69,22 @@
           />
           <span>In stock on website</span>
         </label>
-        <p class="admin-muted">When unchecked, the buy button is disabled and checkout is blocked.</p>
+        <p class="admin-muted">When unchecked, the buy button shows as “Out of Stock” and checkout is blocked.</p>
         @error('is_in_stock')<p class="admin-error">{{ $message }}</p>@enderror
+      </div>
+
+      <div class="admin-field">
+        <label class="admin-checkbox">
+          <input
+            type="checkbox"
+            name="hide_buy_button"
+            value="1"
+            @checked(old('hide_buy_button', $product->hide_buy_button))
+          />
+          <span>Hide buy button</span>
+        </label>
+        <p class="admin-muted">When checked, the buy button is removed from product pages. No out-of-stock message is shown.</p>
+        @error('hide_buy_button')<p class="admin-error">{{ $message }}</p>@enderror
       </div>
 
       <x-admin.form-section title="Shiprocket package details">

@@ -25,6 +25,7 @@ class Product extends Model
         'catalog',
         'is_active',
         'is_in_stock',
+        'hide_buy_button',
     ];
 
     protected function casts(): array
@@ -33,6 +34,7 @@ class Product extends Model
             'catalog' => 'array',
             'is_active' => 'boolean',
             'is_in_stock' => 'boolean',
+            'hide_buy_button' => 'boolean',
             'package_weight_kg' => 'float',
             'package_length_cm' => 'float',
             'package_breadth_cm' => 'float',
@@ -63,6 +65,22 @@ class Product extends Model
     public function isInStock(): bool
     {
         return $this->is_in_stock;
+    }
+
+    public function isBuyButtonHidden(): bool
+    {
+        return $this->hide_buy_button;
+    }
+
+    public function ensurePurchasable(): void
+    {
+        if ($this->hide_buy_button) {
+            throw ValidationException::withMessages([
+                'product' => ['This product is not available for purchase online.'],
+            ]);
+        }
+
+        $this->ensureInStock();
     }
 
     public function ensureInStock(): void
@@ -123,6 +141,7 @@ class Product extends Model
             'order_name' => $this->name,
             'amount_paise' => $this->amount_paise,
             'is_in_stock' => $this->is_in_stock,
+            'hide_buy_button' => $this->hide_buy_button,
         ]);
     }
 
@@ -184,6 +203,7 @@ class Product extends Model
             'order_name' => $this->name,
             'amount_paise' => $this->amount_paise,
             'is_in_stock' => $this->is_in_stock,
+            'hide_buy_button' => $this->hide_buy_button,
         ]);
     }
 }

@@ -60,6 +60,7 @@
             <div class="cta-row">
               @include('website.partials.product-buy-button', [
                 'inStock' => $studioAc['is_in_stock'] ?? true,
+                'hideBuyButton' => $studioAc['hide_buy_button'] ?? false,
                 'href' => route('website.buy_studio_ac'),
                 'label' => 'Buy Studio AC',
               ])

@@ -48,6 +48,7 @@
           </div>
           @include('website.partials.product-buy-button', [
             'inStock' => $ganCharger['is_in_stock'] ?? true,
+            'hideBuyButton' => $ganCharger['hide_buy_button'] ?? false,
             'href' => route('website.buy_gan_charger'),
             'label' => 'BUY',
           ])

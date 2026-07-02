@@ -30,6 +30,7 @@ class UpdateProductRequest extends FormRequest
             'package_breadth_cm' => ['required', 'numeric', 'min:0.5', 'max:999'],
             'package_height_cm' => ['required', 'numeric', 'min:0.5', 'max:999'],
             'is_in_stock' => ['sometimes', 'boolean'],
+            'hide_buy_button' => ['sometimes', 'boolean'],
         ];
     }
 

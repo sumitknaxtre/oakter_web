@@ -53,6 +53,7 @@
           </div>
           @include('website.partials.product-buy-button', [
             'inStock' => $miniUps['is_in_stock'] ?? true,
+            'hideBuyButton' => $miniUps['hide_buy_button'] ?? false,
             'href' => route('website.buy_mini_ups'),
             'label' => 'BUY',
           ])
@@ -92,6 +93,7 @@
           </div>
           @include('website.partials.product-buy-button', [
             'inStock' => $miniUpsAirfiber['is_in_stock'] ?? true,
+            'hideBuyButton' => $miniUpsAirfiber['hide_buy_button'] ?? false,
             'href' => route('website.buy_mini_ups_airfiber'),
             'label' => 'BUY',
           ])

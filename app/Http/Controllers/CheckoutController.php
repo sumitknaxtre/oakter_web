@@ -47,6 +47,10 @@ class CheckoutController extends Controller
 
         $dbProduct = Product::query()->findOrFail($product['id']);
 
+        if ($dbProduct->isBuyButtonHidden()) {
+            return redirect()->to(ProductCatalog::buyRoute($product['slug']));
+        }
+
         if (! $dbProduct->isInStock()) {
             return redirect()
                 ->to(ProductCatalog::buyRoute($product['slug']))
@@ -87,7 +91,7 @@ class CheckoutController extends Controller
         }
 
         $dbProduct = Product::query()->findOrFail($productData['id']);
-        $dbProduct->ensureInStock();
+        $dbProduct->ensurePurchasable();
 
         try {
             $coupon = $this->couponService->resolveForProduct($validated['coupon_code'], $dbProduct);
@@ -113,7 +117,7 @@ class CheckoutController extends Controller
         }
 
         $dbProduct = Product::query()->findOrFail($productData['id']);
-        $dbProduct->ensureInStock();
+        $dbProduct->ensurePurchasable();
         $validated = $request->validated();
 
         $coupon = null;

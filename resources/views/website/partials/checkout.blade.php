@@ -27,6 +27,7 @@
     <div class="checkout-actions">
       @include('website.partials.product-buy-button', [
         'inStock' => $product['is_in_stock'] ?? true,
+        'hideBuyButton' => $product['hide_buy_button'] ?? false,
         'href' => route('website.checkout.show', ['product' => $productSlug]),
         'label' => 'Proceed to payment',
       ])

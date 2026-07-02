@@ -73,6 +73,7 @@ class ProductCatalog
 
             return array_merge($config, [
                 'is_in_stock' => true,
+                'hide_buy_button' => false,
             ]);
         }
 

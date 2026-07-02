@@ -36,6 +36,7 @@ class ProductController extends Controller
 
         $product->update([
             'is_in_stock' => $request->boolean('is_in_stock'),
+            'hide_buy_button' => $request->boolean('hide_buy_button'),
             'sku' => filled($validated['sku'] ?? null) ? $validated['sku'] : null,
             'package_weight_kg' => $validated['package_weight_kg'],
             'package_length_cm' => $validated['package_length_cm'],

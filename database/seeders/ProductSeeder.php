@@ -27,6 +27,7 @@ class ProductSeeder extends Seeder
                     'catalog' => $config,
                     'is_active' => true,
                     'is_in_stock' => true,
+                    'hide_buy_button' => false,
                 ],
             );
         }
