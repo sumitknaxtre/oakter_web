@@ -122,7 +122,11 @@ final class OrderAttribution
 
         foreach ($fields as $key => $label) {
             if (! empty($attribution[$key])) {
-                $rows[] = ['label' => $label, 'value' => (string) $attribution[$key]];
+                $rows[] = [
+                    'label' => $label,
+                    'value' => (string) $attribution[$key],
+                    'breakable' => in_array($key, ['landing_url', 'referrer', 'fbp', 'fbc'], true),
+                ];
             }
         }
 

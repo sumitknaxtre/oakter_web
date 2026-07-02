@@ -846,6 +846,11 @@
     font-size: 0.92rem;
     line-height: 1.5;
     word-break: break-word;
+    min-width: 0;
+}
+
+.admin-detail-list dd.admin-breakable-value {
+    overflow-wrap: anywhere;
 }
 
 .admin-customer-same-as {
@@ -917,6 +922,7 @@
     border: 1px solid var(--line);
     border-radius: var(--radius);
     background: var(--paper);
+    min-width: 0;
 }
 
 .admin-detail-grid h3 {

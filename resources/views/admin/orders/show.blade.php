@@ -142,16 +142,26 @@
 
       <article>
         <h3>Traffic source</h3>
-        <p><strong>Channel:</strong> {{ $order->attributionLabel() }}</p>
-        @forelse ($order->attributionDetails() as $row)
-          @if ($row['label'] !== 'Channel')
-            <p><strong>{{ $row['label'] }}:</strong> {{ $row['value'] }}</p>
-          @endif
-        @empty
+        @php
+          $attributionRows = $order->attributionDetails();
+        @endphp
+        @if ($attributionRows !== [] || $order->meta_event_id)
+          <dl class="admin-detail-list">
+            @foreach ($attributionRows as $row)
+              <div>
+                <dt>{{ $row['label'] }}</dt>
+                <dd @class(['admin-breakable-value' => ! empty($row['breakable'])])>{{ $row['value'] }}</dd>
+              </div>
+            @endforeach
+            @if ($order->meta_event_id)
+              <div>
+                <dt>Meta event ID</dt>
+                <dd class="admin-breakable-value">{{ $order->meta_event_id }}</dd>
+              </div>
+            @endif
+          </dl>
+        @else
           <p class="admin-muted">No attribution data captured for this order.</p>
-        @endforelse
-        @if ($order->meta_event_id)
-          <p><strong>Meta event ID:</strong> {{ $order->meta_event_id }}</p>
         @endif
       </article>
     </div>
