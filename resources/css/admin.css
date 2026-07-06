@@ -202,6 +202,52 @@
     font-weight: 600;
 }
 
+.admin-profile-shell {
+    max-width: 560px;
+}
+
+.admin-profile-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0;
+    padding: 0 4px;
+    border-bottom: 1px solid var(--line);
+}
+
+.admin-profile-tabs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-bottom: -1px;
+    padding: 0 18px;
+    border: 1px solid transparent;
+    border-bottom: 0;
+    border-radius: 12px 12px 0 0;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.16s ease, background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.admin-profile-tabs a:hover {
+    color: var(--ink);
+    background: #ffffffb3;
+}
+
+.admin-profile-tabs a.is-active {
+    color: var(--ink);
+    border-color: var(--line);
+    background: #fff;
+    box-shadow: 0 -8px 20px #1717170a;
+}
+
+.admin-profile-panel {
+    padding: 20px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
 .admin-panel {
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
@@ -461,6 +507,14 @@
 .admin-field label {
     font-size: 0.86rem;
     font-weight: 700;
+}
+
+.admin-field-hint {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.45;
 }
 
 .admin-alert {

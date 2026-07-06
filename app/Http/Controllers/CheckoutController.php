@@ -12,6 +12,7 @@ use App\Services\CheckoutLookupService;
 use App\Services\CheckoutUserService;
 use App\Services\CouponService;
 use App\Services\Meta\MetaProductPayload;
+use App\Support\AdminSettings;
 use App\Support\OrderAttribution;
 use App\Support\ProductCatalog;
 use App\Support\OrderFulfillmentStatus;
@@ -64,6 +65,7 @@ class CheckoutController extends Controller
             'states' => config('india.states'),
             'razorpayKey' => config('razorpay.key_id'),
             'metaCheckoutProduct' => MetaProductPayload::fromCheckoutProduct($product),
+            'shippingDaysEstimate' => AdminSettings::shippingDaysEstimate(),
         ]);
     }
 

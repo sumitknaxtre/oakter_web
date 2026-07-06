@@ -19,4 +19,9 @@ class UpdatePasswordRequest extends FormRequest
             'password' => ['required', 'confirmed', Password::defaults()],
         ];
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return route('admin.profile.edit', ['tab' => 'password']);
+    }
 }

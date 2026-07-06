@@ -1,39 +1,40 @@
 @extends('layouts.admin')
 
-@section('title', 'Profile | Oakter Admin')
+@section('title', ($activeTab === 'password' ? 'Change password' : 'Profile').' | Oakter Admin')
 
 @section('content')
   <div class="admin-topbar">
     <div>
-      <h1>Profile settings</h1>
-      <p>Update your admin account details.</p>
+      @if ($activeTab === 'password')
+        <h1>Change password</h1>
+        <p>Keep your admin account secure with a strong password.</p>
+      @else
+        <h1>Profile settings</h1>
+        <p>Update your admin account details.</p>
+      @endif
     </div>
   </div>
 
-  <section class="admin-panel" style="padding: 20px;">
-    <form class="admin-form" method="post" action="{{ route('admin.profile.update') }}">
-      @csrf
-      @method('PUT')
+  <div class="admin-profile-shell">
+    <nav class="admin-profile-tabs" aria-label="Profile sections">
+      <a
+        href="{{ route('admin.profile.edit') }}"
+        @class(['is-active' => $activeTab === 'profile'])
+        @if ($activeTab === 'profile') aria-current="page" @endif
+      >Profile</a>
+      <a
+        href="{{ route('admin.profile.edit', ['tab' => 'password']) }}"
+        @class(['is-active' => $activeTab === 'password'])
+        @if ($activeTab === 'password') aria-current="page" @endif
+      >Change password</a>
+    </nav>
 
-      <div class="admin-field">
-        <label for="first_name">First name</label>
-        <input id="first_name" type="text" name="first_name" value="{{ old('first_name', $admin->first_name) }}" required />
-        @error('first_name')<p class="admin-error">{{ $message }}</p>@enderror
-      </div>
-
-      <div class="admin-field">
-        <label for="last_name">Last name</label>
-        <input id="last_name" type="text" name="last_name" value="{{ old('last_name', $admin->last_name) }}" required />
-        @error('last_name')<p class="admin-error">{{ $message }}</p>@enderror
-      </div>
-
-      <div class="admin-field">
-        <label for="email">Email</label>
-        <input id="email" type="email" name="email" value="{{ old('email', $admin->email) }}" required />
-        @error('email')<p class="admin-error">{{ $message }}</p>@enderror
-      </div>
-
-      <button class="admin-button" type="submit">Save profile</button>
-    </form>
-  </section>
+    <section class="admin-panel admin-profile-panel">
+      @if ($activeTab === 'password')
+        @include('admin.profile.partials.password-form')
+      @else
+        @include('admin.profile.partials.profile-form')
+      @endif
+    </section>
+  </div>
 @endsection

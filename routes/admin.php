@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\NewsArticleController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Middleware\RedirectIfAdminAuthenticated;
 use Illuminate\Support\Facades\Route;
@@ -65,6 +66,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         Route::middleware('admin')->group(function () {
+            Route::get('settings', [SettingsController::class, 'edit'])->name('settings.edit');
+            Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
             Route::resource('sub-admins', SubAdminController::class)->except(['show']);
         });
     });

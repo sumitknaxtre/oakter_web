@@ -14,8 +14,17 @@ class ProfileController extends Controller
 {
     public function edit(): View
     {
+        $errors = session('errors');
+
+        $activeTab = request('tab') === 'password' ? 'password' : 'profile';
+
+        if ($errors !== null && $errors->hasAny(['current_password', 'password', 'password_confirmation'])) {
+            $activeTab = 'password';
+        }
+
         return view('admin.profile.edit', [
             'admin' => Auth::user(),
+            'activeTab' => $activeTab,
         ]);
     }
 
@@ -26,9 +35,9 @@ class ProfileController extends Controller
         return back()->with('status', 'Profile updated successfully.');
     }
 
-    public function editPassword(): View
+    public function editPassword(): RedirectResponse
     {
-        return view('admin.profile.password');
+        return redirect()->route('admin.profile.edit', ['tab' => 'password']);
     }
 
     public function updatePassword(UpdatePasswordRequest $request): RedirectResponse
@@ -37,6 +46,8 @@ class ProfileController extends Controller
             'password' => Hash::make($request->validated('password')),
         ]);
 
-        return back()->with('status', 'Password updated successfully.');
+        return redirect()
+            ->route('admin.profile.edit', ['tab' => 'password'])
+            ->with('status', 'Password updated successfully.');
     }
 }

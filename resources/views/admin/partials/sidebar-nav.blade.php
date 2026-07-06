@@ -20,7 +20,7 @@
   @endif
   @if (auth()->user()->isAdmin())
     <a href="{{ route('admin.sub-admins.index') }}" @class(['is-active' => request()->routeIs('admin.sub-admins.*')])>Sub admins</a>
+    <a href="{{ route('admin.settings.edit') }}" @class(['is-active' => request()->routeIs('admin.settings.*')])>Settings</a>
   @endif
-  <a href="{{ route('admin.profile.edit') }}" @class(['is-active' => request()->routeIs('admin.profile.edit', 'admin.profile.update')])>Profile</a>
-  <a href="{{ route('admin.profile.password.edit') }}" @class(['is-active' => request()->routeIs('admin.profile.password.*')])>Change password</a>
+  <a href="{{ route('admin.profile.edit') }}" @class(['is-active' => request()->routeIs('admin.profile.*')])>Profile</a>
 </nav>
