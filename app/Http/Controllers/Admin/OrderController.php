@@ -29,8 +29,11 @@ class OrderController extends Controller
 
         if ($validator->fails()) {
             return redirect()
-                ->route('admin.orders.index', array_filter([
+                ->route('admin.orders.index', AdminOrderFilters::queryParameters([
                     'q' => $request->string('q')->toString(),
+                    'from' => $request->string('from')->toString(),
+                    'to' => $request->string('to')->toString(),
+                    'type' => $request->string('type')->toString(),
                 ]))
                 ->withErrors($validator)
                 ->withInput();
@@ -61,8 +64,11 @@ class OrderController extends Controller
 
         if ($validator->fails()) {
             return redirect()
-                ->route('admin.orders.index', array_filter([
+                ->route('admin.orders.index', AdminOrderFilters::queryParameters([
                     'q' => $request->string('q')->toString(),
+                    'from' => $request->string('from')->toString(),
+                    'to' => $request->string('to')->toString(),
+                    'type' => $request->string('type')->toString(),
                 ]))
                 ->withErrors($validator)
                 ->withInput();

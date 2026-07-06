@@ -24,6 +24,7 @@ class CustomerController extends Controller
             return redirect()
                 ->route('admin.customers.index', array_filter([
                     'q' => $request->string('q')->toString(),
+                    'sort' => $request->string('sort')->toString(),
                 ]))
                 ->withErrors($validator)
                 ->withInput();
@@ -32,7 +33,7 @@ class CustomerController extends Controller
         $filters = AdminCustomerFilters::normalize($validator->validated());
 
         $customers = $this->customerQuery($filters)
-            ->latest()
+            ->tap(fn ($query) => AdminCustomerFilters::applySort($query, $filters))
             ->paginate(15)
             ->withQueryString();
 
@@ -52,6 +53,7 @@ class CustomerController extends Controller
             return redirect()
                 ->route('admin.customers.index', array_filter([
                     'q' => $request->string('q')->toString(),
+                    'sort' => $request->string('sort')->toString(),
                 ]))
                 ->withErrors($validator)
                 ->withInput();
@@ -71,7 +73,8 @@ class CustomerController extends Controller
             fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
             fputcsv($handle, CustomersExport::headers());
 
-            $query = $this->customerQuery($filters)->latest();
+            $query = $this->customerQuery($filters);
+            AdminCustomerFilters::applySort($query, $filters);
 
             foreach ($query->cursor() as $customer) {
                 fputcsv($handle, CustomersExport::row($customer));

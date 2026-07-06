@@ -63,7 +63,13 @@
               <td>
                 <form method="post" action="{{ route('admin.abandoned-orders.confirm-payment', $order) }}">
                   @csrf
-                  <button class="admin-link-button" type="submit">Confirm payment</button>
+                  <button
+                    class="admin-link-button"
+                    type="submit"
+                    title="Verifies payment with Razorpay. If a successful payment is found, this order is marked as paid and moved to Orders."
+                  >
+                    Confirm payment
+                  </button>
                 </form>
               </td>
             </tr>

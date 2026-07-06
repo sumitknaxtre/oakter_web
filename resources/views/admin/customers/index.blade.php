@@ -18,7 +18,17 @@
       value="{{ old('q', $filters['q']) }}"
       placeholder="Search name, email, or phone"
     />
-    <button class="admin-button" type="submit">Search</button>
+    <label class="admin-filter-date">
+      <span>Sort by</span>
+      <select name="sort" aria-label="Sort customers">
+        @foreach (\App\Support\AdminCustomerFilters::sortOptions() as $sortOption)
+          <option value="{{ $sortOption }}" @selected(old('sort', $filters['sort']) === $sortOption)>
+            {{ \App\Support\AdminCustomerFilters::sortLabel($sortOption) }}
+          </option>
+        @endforeach
+      </select>
+    </label>
+    <button class="admin-button" type="submit">Apply</button>
     @if ($hasActiveFilters)
       <a class="admin-link-button secondary" href="{{ route('admin.customers.index') }}">Clear</a>
     @endif
@@ -29,6 +39,7 @@
       <table class="admin-table">
         <thead>
           <tr>
+            <th>ID</th>
             <th>Customer</th>
             <th>Email</th>
             <th>Phone</th>
@@ -41,6 +52,7 @@
         <tbody>
           @forelse ($customers as $customer)
             <tr>
+              <td>#{{ $customer->id }}</td>
               <td>{{ $customer->name }}</td>
               <td>{{ $customer->email }}</td>
               <td>{{ $customer->phone ?? '—' }}</td>
@@ -51,7 +63,7 @@
             </tr>
           @empty
             <tr class="admin-table-empty">
-              <td colspan="7">No customers found.</td>
+              <td colspan="8">No customers found.</td>
             </tr>
           @endforelse
         </tbody>

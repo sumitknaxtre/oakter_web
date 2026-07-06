@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 /**
@@ -131,6 +132,64 @@ final class OrderAttribution
         }
 
         return $rows;
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $attribution
+     */
+    public static function isFromMeta(?array $attribution): bool
+    {
+        if ($attribution === null || $attribution === []) {
+            return false;
+        }
+
+        if (! empty($attribution['fbc'])) {
+            return true;
+        }
+
+        $source = strtolower((string) ($attribution['utm_source'] ?? ''));
+
+        if ($source !== '') {
+            if (str_contains($source, 'instagram')
+                || str_contains($source, 'facebook')
+                || $source === 'fb'
+                || str_contains($source, 'meta')) {
+                return true;
+            }
+        }
+
+        $referrer = strtolower((string) ($attribution['referrer'] ?? ''));
+
+        return str_contains($referrer, 'instagram.com')
+            || str_contains($referrer, 'facebook.com')
+            || str_contains($referrer, 'fb.com');
+    }
+
+    /**
+     * @param  Builder<\App\Models\Order>  $query
+     */
+    public static function applyMetaScope(Builder $query): void
+    {
+        $query->where(function (Builder $inner) {
+            $inner->whereNotNull('attribution->fbc')
+                ->where('attribution->fbc', '!=', '')
+                ->orWhere(function (Builder $utm) {
+                    foreach (['facebook', 'meta', 'instagram', 'fb'] as $term) {
+                        $utm->orWhereRaw(
+                            'LOWER(JSON_UNQUOTE(JSON_EXTRACT(attribution, "$.utm_source"))) LIKE ?',
+                            ['%'.$term.'%'],
+                        );
+                    }
+                })
+                ->orWhere(function (Builder $referrer) {
+                    foreach (['facebook.com', 'fb.com', 'instagram.com'] as $host) {
+                        $referrer->orWhereRaw(
+                            'LOWER(JSON_UNQUOTE(JSON_EXTRACT(attribution, "$.referrer"))) LIKE ?',
+                            ['%'.$host.'%'],
+                        );
+                    }
+                });
+        });
     }
 
     private static function clean(?string $value): ?string

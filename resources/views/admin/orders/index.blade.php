@@ -32,6 +32,17 @@
         max="{{ $maxFilterDate }}"
       />
     </label>
+    <label class="admin-filter-date">
+      <span>Order type</span>
+      <select name="type" aria-label="Filter orders by type">
+        <option value="" @selected(old('type', $filters['type']) === '')>All orders</option>
+        @foreach (\App\Support\AdminOrderFilters::typeOptions() as $typeOption)
+          <option value="{{ $typeOption }}" @selected(old('type', $filters['type']) === $typeOption)>
+            {{ \App\Support\AdminOrderFilters::typeLabel($typeOption) }}
+          </option>
+        @endforeach
+      </select>
+    </label>
     <button class="admin-button" type="submit">Apply</button>
     @if ($hasActiveFilters)
       <a class="admin-link-button secondary" href="{{ route('admin.orders.index') }}">Clear</a>
@@ -51,7 +62,7 @@
             <th>Amount</th>
             <th>Coupon</th>
             <th>Payment</th>
-            <th>Fulfillment</th>
+            {{-- <th>Fulfillment</th> --}}
             <th>Payment ID</th>
             <th>Date</th>
             <th class="admin-table-actions-cell">Actions</th>
@@ -69,7 +80,7 @@
                 <div @class(['admin-payment-status-refunded' => $order->isRefunded()])>{{ $order->paymentStatusLabel() }}</div>
                 <div class="admin-muted">{{ $order->payment_method ?? '—' }}</div>
               </td>
-              <td>{{ $order->fulfillmentStatusLabel() }}</td>
+              {{-- <td>{{ $order->fulfillmentStatusLabel() }}</td> --}}
               <td>{{ $order->razorpay_payment_id ?? '—' }}</td>
               <td>{{ $order->created_at->format('d M Y, h:i A') }}</td>
               <td class="admin-table-actions-cell">
@@ -86,7 +97,7 @@
             </tr>
           @empty
             <tr class="admin-table-empty">
-              <td colspan="10">No orders found.</td>
+              <td colspan="9">No orders found.</td>
             </tr>
           @endforelse
         </tbody>

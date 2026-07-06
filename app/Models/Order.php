@@ -109,6 +109,21 @@ class Order extends Model
         return $query->where('payment_status', OrderPaymentStatus::Pending);
     }
 
+    public function scopeFromMeta(Builder $query): Builder
+    {
+        OrderAttribution::applyMetaScope($query);
+
+        return $query;
+    }
+
+    public function scopeCancelled(Builder $query): Builder
+    {
+        return $query->where(function (Builder $inner) {
+            $inner->where('fulfillment_status', OrderFulfillmentStatus::Cancelled)
+                ->orWhere('status', 'cancelled');
+        });
+    }
+
     public function isPaid(): bool
     {
         return (int) $this->payment_status === OrderPaymentStatus::Paid;
