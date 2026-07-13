@@ -14,6 +14,7 @@
     />
     <link rel="icon" type="image/png" href="{{ asset('assets/favicon.png') }}" />
     @include('website.partials.meta-pixel')
+    @include('website.partials.google-analytics')
     @vite(['resources/css/app.css', 'resources/js/checkout.js'])
     @stack('head')
   </head>
@@ -28,5 +29,6 @@
 
     @stack('scripts')
     @stack('meta_pixel_events')
+    @stack('ga_events')
   </body>
 </html>

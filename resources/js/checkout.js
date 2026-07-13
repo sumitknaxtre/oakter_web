@@ -1,5 +1,6 @@
 import './password-toggle.js';
 import './meta-pixel.js';
+import './google-analytics.js';
 
 const PENDING_PAYMENT_KEY = 'oakter_pending_payment';
 

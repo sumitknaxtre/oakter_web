@@ -246,3 +246,13 @@
     </script>
   @endpush
 @endif
+
+@if (config('analytics.enabled') && ! empty($metaCheckoutProduct))
+  @push('ga_events')
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        window.oakterGa?.trackBeginCheckout(@json($metaCheckoutProduct));
+      });
+    </script>
+  @endpush
+@endif

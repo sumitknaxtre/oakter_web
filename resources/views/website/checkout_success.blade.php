@@ -51,3 +51,13 @@
     </script>
   @endpush
 @endif
+
+@if (config('analytics.enabled') && ! empty($metaPurchaseProduct))
+  @push('ga_events')
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        window.oakterGa?.trackPurchase(@json($metaPurchaseProduct));
+      });
+    </script>
+  @endpush
+@endif
