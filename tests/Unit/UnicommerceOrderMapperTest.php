@@ -17,6 +17,7 @@ class UnicommerceOrderMapperTest extends TestCase
             'unicommerce.channel' => 'Oakter Website',
             'unicommerce.shipping_method' => 'STD',
             'unicommerce.order_code_prefix' => 'OAKTER',
+            'unicommerce.display_order_code_prefix' => 'NEW',
         ]);
 
         $order = new Order([
@@ -48,9 +49,10 @@ class UnicommerceOrderMapperTest extends TestCase
         $payload = (new UnicommerceOrderMapper)->toCreateSaleOrderPayload($order);
 
         $this->assertSame('OAKTER-15', $payload['saleOrder']['code']);
-        $this->assertSame('#15', $payload['saleOrder']['displayOrderCode']);
+        $this->assertSame('NEW15', $payload['saleOrder']['displayOrderCode']);
         $this->assertFalse($payload['saleOrder']['cashOnDelivery']);
         $this->assertSame('WALLET', $payload['saleOrder']['paymentInstrument']);
+        $this->assertSame('OAKTER-15-1', $payload['saleOrder']['saleOrderItems'][0]['code']);
         $this->assertSame('STUDIO-AC-5000', $payload['saleOrder']['saleOrderItems'][0]['itemSku']);
         $this->assertSame(16899.01, $payload['saleOrder']['saleOrderItems'][0]['prepaidAmount']);
         $this->assertSame(99.99, $payload['saleOrder']['saleOrderItems'][0]['discount']);
@@ -66,6 +68,7 @@ class UnicommerceOrderMapperTest extends TestCase
             'unicommerce.channel' => 'CUSTOM_WEBSITE',
             'unicommerce.shipping_method' => 'STD',
             'unicommerce.order_code_prefix' => 'OAKTER',
+            'unicommerce.display_order_code_prefix' => 'NEW',
         ]);
 
         $order = new Order([

@@ -20,4 +20,6 @@ return [
 
     'order_code_prefix' => env('UNICOMMERCE_ORDER_CODE_PREFIX', 'OAKTER'),
 
+    'display_order_code_prefix' => env('UNICOMMERCE_DISPLAY_ORDER_CODE_PREFIX', 'NEW'),
+
 ];

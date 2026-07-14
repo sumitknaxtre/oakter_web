@@ -38,7 +38,7 @@ class UnicommerceOrderMapper
         return [
             'saleOrder' => [
                 'code' => $saleOrderCode,
-                'displayOrderCode' => '#'.$order->id,
+                'displayOrderCode' => $this->displayOrderCode($order),
                 'displayOrderDateTime' => $order->paid_at?->toIso8601String() ?? now()->toIso8601String(),
                 'customerName' => $order->customer_name,
                 'channel' => config('unicommerce.channel'),
@@ -81,6 +81,13 @@ class UnicommerceOrderMapper
         $prefix = config('unicommerce.order_code_prefix', 'OAKTER');
 
         return $prefix.'-'.$order->id;
+    }
+
+    public function displayOrderCode(Order $order): string
+    {
+        $prefix = config('unicommerce.display_order_code_prefix', 'NEW');
+
+        return $prefix.$order->id;
     }
 
     /**
