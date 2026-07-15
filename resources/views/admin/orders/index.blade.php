@@ -71,7 +71,7 @@
         <tbody>
           @forelse ($orders as $order)
             <tr>
-              <td>#{{ $order->id }}</td>
+              <td>{{ $order->displayOrderCode() }}</td>
               <td>@include('admin.partials.order-customer-list-cell', ['order' => $order])</td>
               <td>{{ $order->product_name }}</td>
               <td>{{ $order->formattedAmount() }}</td>
@@ -88,7 +88,7 @@
                   <a
                     class="admin-link-button secondary"
                     href="{{ route('admin.orders.show', $order) }}"
-                    aria-label="View order #{{ $order->id }} details"
+                    aria-label="View order {{ $order->displayOrderCode() }} details"
                   >
                     View
                   </a>

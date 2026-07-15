@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Order #'.$order->id.' | Oakter Admin')
+@section('title', 'Order '.$order->displayOrderCode().' | Oakter Admin')
 
 @section('content')
   @php
@@ -10,7 +10,7 @@
 
   <div class="admin-topbar">
     <div>
-      <h1>Order #{{ $order->id }}</h1>
+      <h1>Order {{ $order->displayOrderCode() }}</h1>
       <p>{{ $order->product_name }}</p>
     </div>
     <div class="admin-topbar-actions">

@@ -247,6 +247,16 @@ class Order extends Model
         return $this->formatPaise($this->amount_paise);
     }
 
+    /**
+     * Display code shown in admin and sent to Uniware as displayOrderCode.
+     */
+    public function displayOrderCode(): string
+    {
+        $prefix = config('unicommerce.display_order_code_prefix', 'NEW');
+
+        return $prefix.$this->id;
+    }
+
     public function formattedSubtotal(): string
     {
         return $this->formatPaise($this->subtotal_paise);
