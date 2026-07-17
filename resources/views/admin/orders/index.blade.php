@@ -8,7 +8,10 @@
       <h1>Orders</h1>
       <p>Search, filter by date, and export customer orders.</p>
     </div>
-    <a class="admin-link-button secondary" href="{{ $exportUrl }}">Export CSV</a>
+    <div class="admin-topbar-actions">
+      <a class="admin-link-button secondary" href="{{ $paymentIdsExportUrl }}">Export Payment IDs</a>
+      <a class="admin-link-button secondary" href="{{ $exportUrl }}">Export CSV</a>
+    </div>
   </div>
 
   <form class="admin-filters" method="get" action="{{ route('admin.orders.index') }}">

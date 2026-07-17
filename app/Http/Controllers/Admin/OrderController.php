@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\OrderPaymentIdsExport;
 use App\Exports\OrdersExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateOrderCustomerRequest;
@@ -54,6 +55,7 @@ class OrderController extends Controller
             'filters' => $filters,
             'hasActiveFilters' => AdminOrderFilters::hasActiveFilters($filters),
             'exportUrl' => route('admin.orders.export', AdminOrderFilters::queryParameters($filters)),
+            'paymentIdsExportUrl' => route('admin.orders.payment-ids.export', AdminOrderFilters::queryParameters($filters)),
             'maxFilterDate' => AdminOrderFilters::maxFilterDate(),
         ]);
     }
@@ -96,6 +98,51 @@ class OrderController extends Controller
 
             foreach ($query->cursor() as $order) {
                 fputcsv($handle, OrdersExport::row($order));
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
+    public function exportPaymentIds(Request $request): StreamedResponse|RedirectResponse
+    {
+        $validator = AdminOrderFilters::makeValidator($request);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->route('admin.orders.index', AdminOrderFilters::queryParameters([
+                    'q' => $request->string('q')->toString(),
+                    'from' => $request->string('from')->toString(),
+                    'to' => $request->string('to')->toString(),
+                    'type' => $request->string('type')->toString(),
+                ]))
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $filters = AdminOrderFilters::normalize($validator->validated());
+        $filename = 'oakter-payment-ids-'.now()->format('Y-m-d-His').'.csv';
+
+        return response()->streamDownload(function () use ($filters) {
+            $handle = fopen('php://output', 'w');
+
+            if ($handle === false) {
+                return;
+            }
+
+            fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
+            fputcsv($handle, OrderPaymentIdsExport::headers());
+
+            $query = Order::query()
+                ->with('user')
+                ->listedInAdmin()
+                ->tap(fn ($builder) => AdminOrderFilters::apply($builder, $filters))
+                ->latest();
+
+            foreach ($query->cursor() as $order) {
+                fputcsv($handle, OrderPaymentIdsExport::row($order));
             }
 
             fclose($handle);

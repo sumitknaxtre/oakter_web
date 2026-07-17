@@ -33,6 +33,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         Route::middleware('permission:orders')->group(function () {
+            Route::get('orders/export-payment-ids', [OrderController::class, 'exportPaymentIds'])->name('orders.payment-ids.export');
             Route::get('orders/export', [OrderController::class, 'export'])->name('orders.export');
             Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
             Route::get('orders/{order}/customer/edit', [OrderController::class, 'editCustomer'])->name('orders.customer.edit');
