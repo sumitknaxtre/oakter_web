@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class UnicommerceOrderMapperTest extends TestCase
 {
-    public function test_it_maps_a_prepaid_order_to_a_create_sale_order_payload(): void
+    public function test_it_maps_a_coupon_order_with_post_discount_selling_price(): void
     {
         config([
             'unicommerce.channel' => 'Oakter Website',
@@ -34,11 +34,14 @@ class UnicommerceOrderMapperTest extends TestCase
             ],
             'billing_same_as_shipping' => true,
             'subtotal_paise' => 1699900,
-            'discount_paise' => 9999,
-            'amount_paise' => 1689901,
+            'discount_paise' => 150000,
+            'amount_paise' => 1549900,
             'shipping_charges' => 0,
             'currency' => 'INR',
             'payment_method' => 'UPI',
+            'coupon_snapshot' => [
+                'code' => 'SAVE1500',
+            ],
             'paid_at' => Carbon::parse('2026-06-24 10:30:00'),
         ]);
         $order->id = 15;
@@ -47,15 +50,19 @@ class UnicommerceOrderMapperTest extends TestCase
         $order->setRelation('product', new Product(['sku' => 'STUDIO-AC-5000']));
 
         $payload = (new UnicommerceOrderMapper)->toCreateSaleOrderPayload($order);
+        $item = $payload['saleOrder']['saleOrderItems'][0];
 
         $this->assertSame('OAKTER-15', $payload['saleOrder']['code']);
         $this->assertSame('NEW15', $payload['saleOrder']['displayOrderCode']);
         $this->assertFalse($payload['saleOrder']['cashOnDelivery']);
         $this->assertSame('WALLET', $payload['saleOrder']['paymentInstrument']);
-        $this->assertSame('OAKTER-15-1', $payload['saleOrder']['saleOrderItems'][0]['code']);
-        $this->assertSame('STUDIO-AC-5000', $payload['saleOrder']['saleOrderItems'][0]['itemSku']);
-        $this->assertSame(16899.01, $payload['saleOrder']['saleOrderItems'][0]['prepaidAmount']);
-        $this->assertSame(99.99, $payload['saleOrder']['saleOrderItems'][0]['discount']);
+        $this->assertSame('OAKTER-15-1', $item['code']);
+        $this->assertSame('STUDIO-AC-5000', $item['itemSku']);
+        $this->assertSame(15499.0, $item['sellingPrice']);
+        $this->assertSame(15499.0, $item['totalPrice']);
+        $this->assertSame(15499.0, $item['prepaidAmount']);
+        $this->assertSame(0, $item['discount']);
+        $this->assertSame('Coupon SAVE1500: -₹1,500.00', $payload['saleOrder']['additionalInfo']);
         $this->assertArrayNotHasKey('totalDiscount', $payload['saleOrder']);
         $this->assertArrayNotHasKey('totalPrepaidAmount', $payload['saleOrder']);
         $this->assertArrayNotHasKey('totalShippingCharges', $payload['saleOrder']);
@@ -102,7 +109,8 @@ class UnicommerceOrderMapperTest extends TestCase
         $this->assertSame(16999.0, $item['sellingPrice']);
         $this->assertSame(16999.0, $item['totalPrice']);
         $this->assertSame(16999.0, $item['prepaidAmount']);
-        $this->assertSame(0.0, $item['discount']);
+        $this->assertSame(0, $item['discount']);
+        $this->assertArrayNotHasKey('additionalInfo', $payload['saleOrder']);
         $this->assertArrayNotHasKey('totalPrepaidAmount', $payload['saleOrder']);
     }
 }

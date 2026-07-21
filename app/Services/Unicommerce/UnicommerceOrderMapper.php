@@ -31,48 +31,55 @@ class UnicommerceOrderMapper
 
         $saleOrderCode = $this->saleOrderCode($order);
         $amount = $this->rupees($order->amount_paise);
-        $subtotal = $this->rupees($order->subtotal_paise);
-        $discount = $this->rupees($order->discount_paise);
         $shippingCharges = $this->rupees($order->shipping_charges);
 
-        return [
-            'saleOrder' => [
-                'code' => $saleOrderCode,
-                'displayOrderCode' => $this->displayOrderCode($order),
-                'displayOrderDateTime' => $order->paid_at?->toIso8601String() ?? now()->toIso8601String(),
-                'customerName' => $order->customer_name,
-                'channel' => config('unicommerce.channel'),
-                'notificationEmail' => $order->user?->email,
-                'notificationMobile' => $order->phone,
-                'cashOnDelivery' => false,
-                'paymentInstrument' => $this->paymentInstrument($order->payment_method),
-                'currencyCode' => $order->currency,
-                'addresses' => [
-                    $this->addressPayload(self::SHIPPING_ADDRESS_ID, $shipping, $order),
-                    $this->addressPayload(self::BILLING_ADDRESS_ID, $billing, $order),
-                ],
-                'shippingAddress' => [
-                    'referenceId' => self::SHIPPING_ADDRESS_ID,
-                ],
-                'billingAddress' => [
-                    'referenceId' => self::BILLING_ADDRESS_ID,
-                ],
-                'saleOrderItems' => [
-                    [
-                        'code' => $saleOrderCode.'-1',
-                        'itemSku' => $sku,
-                        'shippingMethodCode' => config('unicommerce.shipping_method', 'STD'),
-                        'packetNumber' => 1,
-                        'giftWrap' => false,
-                        'facilityCode' => '',
-                        'totalPrice' => $amount,
-                        'sellingPrice' => $subtotal,
-                        'prepaidAmount' => $amount,
-                        'discount' => $discount,
-                        'shippingCharges' => $shippingCharges,
-                    ],
+        $saleOrder = [
+            'code' => $saleOrderCode,
+            'displayOrderCode' => $this->displayOrderCode($order),
+            'displayOrderDateTime' => $order->paid_at?->toIso8601String() ?? now()->toIso8601String(),
+            'customerName' => $order->customer_name,
+            'channel' => config('unicommerce.channel'),
+            'notificationEmail' => $order->user?->email,
+            'notificationMobile' => $order->phone,
+            'cashOnDelivery' => false,
+            'paymentInstrument' => $this->paymentInstrument($order->payment_method),
+            'currencyCode' => $order->currency,
+            'addresses' => [
+                $this->addressPayload(self::SHIPPING_ADDRESS_ID, $shipping, $order),
+                $this->addressPayload(self::BILLING_ADDRESS_ID, $billing, $order),
+            ],
+            'shippingAddress' => [
+                'referenceId' => self::SHIPPING_ADDRESS_ID,
+            ],
+            'billingAddress' => [
+                'referenceId' => self::BILLING_ADDRESS_ID,
+            ],
+            'saleOrderItems' => [
+                [
+                    'code' => $saleOrderCode.'-1',
+                    'itemSku' => $sku,
+                    'shippingMethodCode' => config('unicommerce.shipping_method', 'STD'),
+                    'packetNumber' => 1,
+                    'giftWrap' => false,
+                    'facilityCode' => '',
+                    // Post-coupon tax-inclusive amount so Uniware invoices tax on what the customer paid.
+                    'totalPrice' => $amount,
+                    'sellingPrice' => $amount,
+                    'prepaidAmount' => $amount,
+                    'discount' => 0,
+                    'shippingCharges' => $shippingCharges,
                 ],
             ],
+        ];
+
+        $couponNote = $this->couponAdditionalInfo($order);
+
+        if ($couponNote !== null) {
+            $saleOrder['additionalInfo'] = $couponNote;
+        }
+
+        return [
+            'saleOrder' => $saleOrder,
         ];
     }
 
@@ -88,6 +95,21 @@ class UnicommerceOrderMapper
         $prefix = config('unicommerce.display_order_code_prefix', 'NEW');
 
         return $prefix.$order->id;
+    }
+
+    /**
+     * Coupon note for Uniware ops. Item discount is kept at 0 so taxable value
+     * is based on the post-coupon selling price.
+     */
+    private function couponAdditionalInfo(Order $order): ?string
+    {
+        if ($order->discount_paise <= 0) {
+            return null;
+        }
+
+        $code = $order->coupon_code ?: 'COUPON';
+
+        return 'Coupon '.$code.': -'.$order->formattedDiscount();
     }
 
     /**

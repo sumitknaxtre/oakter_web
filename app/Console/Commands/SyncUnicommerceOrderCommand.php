@@ -55,11 +55,23 @@ class SyncUnicommerceOrderCommand extends Command
         }
 
         $saleOrder = $payload['saleOrder'];
+        $item = $saleOrder['saleOrderItems'][0] ?? [];
         $hasOrderLevelDiscount = array_key_exists('totalDiscount', $saleOrder);
         $hasOrderLevelPrepaid = array_key_exists('totalPrepaidAmount', $saleOrder);
 
         $this->line('Order-level totalDiscount: '.($hasOrderLevelDiscount ? 'YES (bad)' : 'no'));
         $this->line('Order-level totalPrepaidAmount: '.($hasOrderLevelPrepaid ? 'YES (bad)' : 'no'));
+        $this->newLine();
+        $this->line('Invoice pricing check (taxable base = sellingPrice):');
+        $this->line('  sellingPrice: '.($item['sellingPrice'] ?? '(missing)'));
+        $this->line('  totalPrice: '.($item['totalPrice'] ?? '(missing)'));
+        $this->line('  prepaidAmount: '.($item['prepaidAmount'] ?? '(missing)'));
+        $this->line('  discount: '.($item['discount'] ?? '(missing)').' (must be 0; coupon goes in additionalInfo)');
+        $this->line('  additionalInfo: '.($saleOrder['additionalInfo'] ?? '(none)'));
+        $this->line('  expected taxable (post-coupon): '.$this->formatRupees($order->amount_paise));
+        if ($order->discount_paise > 0) {
+            $this->line('  coupon discount (info only): '.$this->formatRupees($order->discount_paise));
+        }
 
         $this->newLine();
         $this->line('Payload JSON:');
@@ -67,6 +79,8 @@ class SyncUnicommerceOrderCommand extends Command
 
         if ($this->option('dry-run')) {
             $this->info('Dry run complete. No API call made.');
+            $this->comment('Verify: sellingPrice == amount paid; then sync for real and confirm Uniware invoice taxable value matches.');
+            $this->comment('Note: already-synced Uniware orders keep old prices; only new creates get this pricing.');
 
             return self::SUCCESS;
         }
@@ -102,7 +116,13 @@ class SyncUnicommerceOrderCommand extends Command
         }
 
         $this->info('Order #'.$order->id.' synced to Uniware successfully.');
+        $this->comment('Next: print Uniware invoice and confirm taxable value equals sellingPrice (post-coupon amount).');
 
         return self::SUCCESS;
+    }
+
+    private function formatRupees(int $paise): string
+    {
+        return '₹'.number_format($paise / 100, 2);
     }
 }
