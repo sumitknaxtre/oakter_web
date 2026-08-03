@@ -18,7 +18,7 @@ class CouponController extends Controller
             ->with('products')
             ->withCount('orders')
             ->latest()
-            ->get();
+            ->paginate(15);
 
         return view('admin.coupons.index', compact('coupons'));
     }

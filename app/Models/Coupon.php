@@ -42,6 +42,26 @@ class Coupon extends Model
         return '₹'.number_format($this->discount_amount_paise / 100, 2);
     }
 
+    /**
+     * Expiry is evaluated in the app timezone (Asia/Kolkata).
+     */
+    public function isExpired(): bool
+    {
+        return $this->ends_at !== null && now()->gt($this->ends_at);
+    }
+
+    /**
+     * @return 'expired'|'active'|'inactive'
+     */
+    public function adminStatus(): string
+    {
+        if ($this->isExpired()) {
+            return 'expired';
+        }
+
+        return $this->is_active ? 'active' : 'inactive';
+    }
+
     public function toSnapshot(): array
     {
         return [

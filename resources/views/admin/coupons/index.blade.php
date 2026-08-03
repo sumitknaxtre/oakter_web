@@ -32,18 +32,23 @@
               <td>{{ $coupon->formattedDiscount() }}</td>
               <td class="admin-product-list-cell">{{ $coupon->products->pluck('name')->join(', ') }}</td>
               <td>
-                @if ($coupon->is_active)
-                  <span class="admin-badge is-paid">Active</span>
-                @else
-                  <span class="admin-badge is-failed">Inactive</span>
-                @endif
+                @switch ($coupon->adminStatus())
+                  @case('expired')
+                    <span class="admin-badge is-failed">Expired</span>
+                    @break
+                  @case('active')
+                    <span class="admin-badge is-paid">Active</span>
+                    @break
+                  @default
+                    <span class="admin-badge is-pending">Inactive</span>
+                @endswitch
               </td>
               <td>{{ number_format($coupon->used_count) }}@if ($coupon->usage_limit) / {{ number_format($coupon->usage_limit) }}@endif</td>
               <td>
                 @if ($coupon->starts_at || $coupon->ends_at)
-                  {{ $coupon->starts_at?->format('d M Y') ?? '—' }}
+                  {{ $coupon->starts_at?->timezone(config('app.timezone'))->format('d M Y, h:i A') ?? '—' }}
                   –
-                  {{ $coupon->ends_at?->format('d M Y') ?? '—' }}
+                  {{ $coupon->ends_at?->timezone(config('app.timezone'))->format('d M Y, h:i A') ?? '—' }}
                 @else
                   Always on
                 @endif
@@ -67,5 +72,11 @@
         </tbody>
       </table>
     </div>
+
+    @if ($coupons->hasPages())
+      <div class="admin-pagination">
+        {{ $coupons->links('vendor.pagination.admin') }}
+      </div>
+    @endif
   </section>
 @endsection
