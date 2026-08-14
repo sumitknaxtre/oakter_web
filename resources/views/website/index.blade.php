@@ -84,7 +84,7 @@
       <section class="section intro" id="compare">
         <div>
           <p class="eyebrow">Why Studio AC leads</p>
-          <h2>Most rooms do not need a big AC.</h2>
+          <h2>Designed from first principles for Indian homes.</h2>
         </div>
         <p>
           Studio AC delivers lower running cost, simpler installation, smaller footprint and optimal
