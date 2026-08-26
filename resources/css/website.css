@@ -140,3 +140,263 @@
     align-items: center;
     gap: 16px;
 }
+
+.company-policies-section {
+    max-width: 980px;
+    margin-inline: auto;
+}
+
+.policy-accordion {
+    display: grid;
+    gap: 32px;
+}
+
+.policy-accordion-item {
+    border: 1px solid rgba(23, 23, 23, 0.08);
+    border-radius: calc(var(--radius-lg) + 4px);
+    background: var(--white);
+    box-shadow: 0 18px 40px rgba(23, 23, 23, 0.06);
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.policy-accordion-item:hover {
+    border-color: rgba(244, 165, 28, 0.45);
+    box-shadow: 0 22px 48px rgba(23, 23, 23, 0.1);
+}
+
+.policy-accordion-item[open] {
+    border-color: rgba(244, 165, 28, 0.35);
+    box-shadow: 0 24px 56px rgba(23, 23, 23, 0.1);
+}
+
+.policy-accordion-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 108px;
+    padding: clamp(28px, 4vw, 40px) clamp(24px, 4vw, 36px);
+    cursor: pointer;
+    list-style: none;
+    color: var(--ink);
+    background:
+        radial-gradient(circle at 100% 0%, rgba(244, 165, 28, 0.16), transparent 42%),
+        linear-gradient(135deg, #ffffff 0%, #fbfaf7 100%);
+}
+
+.policy-accordion-item summary::-webkit-details-marker,
+.policy-accordion-item summary::marker {
+    display: none;
+    content: "";
+}
+
+.policy-accordion-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 3.2vw, 2.35rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--orange);
+}
+
+.policy-accordion-item summary::after {
+    content: "+";
+    flex: 0 0 auto;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(244, 165, 28, 0.45);
+    border-radius: 999px;
+    background: var(--orange-soft);
+    color: var(--orange-dark);
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.policy-accordion-item[open] summary {
+    border-bottom: 1px solid var(--line);
+    min-height: 88px;
+}
+
+.policy-accordion-item[open] summary::after {
+    content: "–";
+    background: var(--orange);
+    border-color: var(--orange);
+    color: #171717;
+}
+
+.policy-document {
+    padding: clamp(28px, 4vw, 42px) clamp(22px, 4vw, 36px) clamp(36px, 5vw, 52px);
+    background: linear-gradient(180deg, #fffdf8 0%, #ffffff 18%);
+}
+
+.policy-document h3,
+.policy-document .policy-heading {
+    margin: 2.1em 0 0.85em;
+    padding-bottom: 0.35em;
+    border-bottom: 1px solid rgba(244, 165, 28, 0.28);
+    font-family: var(--font-display);
+    font-size: clamp(1.12rem, 1.9vw, 1.38rem);
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--orange);
+}
+
+.policy-document h3:first-child,
+.policy-document .policy-heading:first-child {
+    margin-top: 0.35em;
+}
+
+.policy-document .policy-heading-gold,
+.policy-document .policy-heading-teal {
+    color: var(--orange);
+}
+
+.policy-document p,
+.policy-document li {
+    color: #4f4c48;
+    font-size: 1rem;
+    line-height: 1.75;
+}
+
+.policy-document p {
+    margin: 0 0 1em;
+}
+
+.policy-document .policy-clause {
+    margin: 0.35em 0 0.7em;
+    padding-left: 0.2em;
+}
+
+.policy-document ol.policy-toc {
+    margin: 0.4em 0 1.6em;
+    padding: 18px 18px 18px 2em;
+    border: 1px solid rgba(244, 165, 28, 0.2);
+    border-radius: var(--radius);
+    background: rgba(255, 242, 211, 0.35);
+    list-style: decimal;
+}
+
+.policy-document ol.policy-toc li {
+    margin: 0.55em 0;
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.policy-document ol.policy-alpha {
+    margin: 0 0 1.2em;
+    padding-left: 1.5em;
+    list-style: lower-alpha;
+}
+
+.policy-document ul.policy-bullets,
+.policy-document ul {
+    margin: 0 0 1.2em;
+    padding-left: 1.25em;
+    list-style: disc;
+}
+
+.policy-document li {
+    margin: 0.4em 0;
+}
+
+.policy-document a {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.policy-figure {
+    margin: 1.4em 0 1.8em;
+    padding: 16px;
+    border: 1px solid rgba(244, 165, 28, 0.22);
+    border-radius: var(--radius);
+    background: var(--orange-soft);
+}
+
+.policy-figure img {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    margin: 0 auto;
+}
+
+.policy-table-wrap {
+    margin: 1.2em 0 1.6em;
+    overflow-x: auto;
+    border: 1px solid rgba(244, 165, 28, 0.22);
+    border-radius: var(--radius);
+}
+
+.policy-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 520px;
+}
+
+.policy-table th,
+.policy-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+.policy-table th {
+    background: rgba(255, 242, 211, 0.55);
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.policy-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.policy-closing {
+    margin: clamp(48px, 8vw, 88px) auto 12px;
+    padding: clamp(28px, 5vw, 48px) clamp(16px, 4vw, 32px);
+    max-width: 42rem;
+    text-align: center;
+}
+
+.policy-document .policy-closing-brand {
+    margin: 0 0 0.2em;
+    color: var(--ink);
+    font-family: "Times New Roman", "Times", "Liberation Serif", serif;
+    font-size: clamp(3.75rem, 10vw, 6.5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.03em;
+}
+
+.policy-document .policy-closing-tagline {
+    margin: 0 0 1.8em;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.policy-document .policy-closing-quote {
+    margin: 0 auto;
+    max-width: 34rem;
+    color: var(--ink);
+    font-family: "Times New Roman", "Times", "Liberation Serif", serif;
+    font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.55;
+}
+
+@media (min-width: 720px) {
+    .policy-accordion {
+        gap: 40px;
+    }
+}

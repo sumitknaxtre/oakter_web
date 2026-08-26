@@ -41,6 +41,7 @@
     <span>&copy; {{ date('Y') }} Oakter. Made in India.</span>
     <div class="footer-bottom-links">
       <a href="{{ route('website.privacy') }}" @if (request()->routeIs('website.privacy')) aria-current="page" @endif>Privacy policy</a>
+      <a href="{{ route('website.company_policies') }}" @if (request()->routeIs('website.company_policies')) aria-current="page" @endif>Company Policies</a>
     </div>
   </div>
 </footer>

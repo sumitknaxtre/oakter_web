@@ -8,6 +8,7 @@ Route::view('/', 'website.index')->name('website.home');
 Route::view('/about', 'website.about_us')->name('website.about');
 Route::view('/contact-us', 'website.contact_us')->name('website.contact');
 Route::view('/privacy-policy', 'website.privacy_policy')->name('website.privacy');
+Route::view('/company-policies', 'website.company_policies')->name('website.company_policies');
 Route::view('/collections/all', 'website.b2b_products')->name('website.collections.all');
 
 Route::get('/checkout/lookup', [CheckoutController::class, 'lookup'])->middleware('throttle:30,1')->name('website.checkout.lookup');
