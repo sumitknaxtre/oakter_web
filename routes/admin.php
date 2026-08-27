@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\ShopifyCustomerController;
+use App\Http\Controllers\Admin\ShopifyOrderController;
 use App\Http\Controllers\Admin\SubAdminController;
 use App\Http\Middleware\RedirectIfAdminAuthenticated;
 use Illuminate\Support\Facades\Route;
@@ -45,11 +47,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('abandoned-orders/export', [AbandonedOrderController::class, 'export'])->name('abandoned-orders.export');
             Route::get('abandoned-orders', [AbandonedOrderController::class, 'index'])->name('abandoned-orders.index');
             Route::post('abandoned-orders/{order}/confirm-payment', [AbandonedOrderController::class, 'confirmPayment'])->name('abandoned-orders.confirm-payment');
+
+            Route::get('shopify-orders', [ShopifyOrderController::class, 'index'])->name('shopify-orders.index');
+            Route::get('shopify-orders/{shopifyOrder}', [ShopifyOrderController::class, 'show'])->name('shopify-orders.show');
         });
 
         Route::middleware('permission:customers')->group(function () {
             Route::get('customers/export', [CustomerController::class, 'export'])->name('customers.export');
             Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
+
+            Route::get('shopify-customers', [ShopifyCustomerController::class, 'index'])->name('shopify-customers.index');
+            Route::get('shopify-customers/{shopifyCustomer}', [ShopifyCustomerController::class, 'show'])->name('shopify-customers.show');
         });
 
         Route::middleware('permission:products')->group(function () {

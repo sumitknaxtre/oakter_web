@@ -22,5 +22,11 @@
     <a href="{{ route('admin.sub-admins.index') }}" @class(['is-active' => request()->routeIs('admin.sub-admins.*')])>Sub admins</a>
     <a href="{{ route('admin.settings.edit') }}" @class(['is-active' => request()->routeIs('admin.settings.*')])>Settings</a>
   @endif
+  @if (auth()->user()->hasAdminPermission(\App\Support\AdminPermissions::CUSTOMERS))
+    <a href="{{ route('admin.shopify-customers.index') }}" @class(['is-active' => request()->routeIs('admin.shopify-customers.*')])>Shopify customers</a>
+  @endif
+  @if (auth()->user()->hasAdminPermission(\App\Support\AdminPermissions::ORDERS))
+    <a href="{{ route('admin.shopify-orders.index') }}" @class(['is-active' => request()->routeIs('admin.shopify-orders.*')])>Shopify orders</a>
+  @endif
   <a href="{{ route('admin.profile.edit') }}" @class(['is-active' => request()->routeIs('admin.profile.*')])>Profile</a>
 </nav>
