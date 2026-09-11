@@ -10,5 +10,7 @@
     <a href="{{ route('website.mini_ups') }}" @if (request()->routeIs('website.mini_ups', 'website.buy_mini_ups', 'website.buy_mini_ups_airfiber', 'website.legacy.products.mini_ups_pro', 'website.legacy.products.mini_ups_12v', 'website.legacy.products.mini_ups_airfiber', 'website.legacy.mini_ups_airfiber')) aria-current="page" @endif>Mini UPS</a>
     <a href="{{ route('website.gan_charger') }}" @if (request()->routeIs('website.gan_charger', 'website.buy_gan_charger')) aria-current="page" @endif>GaN Charger</a>
     <a href="{{ route('website.collections.all') }}" @if (request()->routeIs('website.collections.all')) aria-current="page" @endif>B2B Products</a>
+    {{-- Temporary: hide Retail Outlets from public nav; page still reachable via direct URL --}}
+    {{-- <a href="{{ route('website.retail_outlets') }}" @if (request()->routeIs('website.retail_outlets', 'website.retail_outlets.dealers')) aria-current="page" @endif>Retail Outlets</a> --}}
   </nav>
 </header>
