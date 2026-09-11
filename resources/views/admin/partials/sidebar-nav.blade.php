@@ -18,6 +18,9 @@
   @if (auth()->user()->hasAdminPermission(\App\Support\AdminPermissions::NEWS))
     <a href="{{ route('admin.news-articles.index') }}" @class(['is-active' => request()->routeIs('admin.news-articles.*')])>News articles</a>
   @endif
+  @if (auth()->user()->hasAdminPermission(\App\Support\AdminPermissions::DEALERS))
+    <a href="{{ route('admin.dealers.index') }}" @class(['is-active' => request()->routeIs('admin.dealers.*')])>Dealers</a>
+  @endif
   @if (auth()->user()->isAdmin())
     <a href="{{ route('admin.sub-admins.index') }}" @class(['is-active' => request()->routeIs('admin.sub-admins.*')])>Sub admins</a>
     <a href="{{ route('admin.settings.edit') }}" @class(['is-active' => request()->routeIs('admin.settings.*')])>Settings</a>

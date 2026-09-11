@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\MediaInsightsController;
+use App\Http\Controllers\Website\RetailOutletsController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'website.index')->name('website.home');
@@ -10,6 +11,11 @@ Route::view('/contact-us', 'website.contact_us')->name('website.contact');
 Route::view('/privacy-policy', 'website.privacy_policy')->name('website.privacy');
 Route::view('/company-policies', 'website.company_policies')->name('website.company_policies');
 Route::view('/collections/all', 'website.b2b_products')->name('website.collections.all');
+
+Route::get('/retail-outlets', [RetailOutletsController::class, 'index'])->name('website.retail_outlets');
+Route::get('/retail-outlets/dealers', [RetailOutletsController::class, 'dealers'])
+    ->middleware('throttle:60,1')
+    ->name('website.retail_outlets.dealers');
 
 Route::get('/checkout/lookup', [CheckoutController::class, 'lookup'])->middleware('throttle:30,1')->name('website.checkout.lookup');
 Route::get('/checkout/{product}', [CheckoutController::class, 'show'])->name('website.checkout.show');

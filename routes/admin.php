@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DealerController;
 use App\Http\Controllers\Admin\NewsArticleController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
@@ -72,6 +73,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::middleware('permission:news')->group(function () {
             Route::resource('news-articles', NewsArticleController::class)->except(['show']);
+        });
+
+        Route::middleware('permission:dealers')->group(function () {
+            Route::resource('dealers', DealerController::class)->except(['show']);
         });
 
         Route::middleware('admin')->group(function () {

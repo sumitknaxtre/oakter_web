@@ -18,6 +18,8 @@ class AdminPermissions
 
     public const CUSTOMERS = 'customers';
 
+    public const DEALERS = 'dealers';
+
     /**
      * @return array<string, string>
      */
@@ -30,6 +32,7 @@ class AdminPermissions
             self::PRODUCTS => 'Products',
             self::COUPONS => 'Coupons',
             self::NEWS => 'News articles',
+            self::DEALERS => 'Dealers',
         ];
     }
 
@@ -56,6 +59,7 @@ class AdminPermissions
             'admin.products.*' => self::PRODUCTS,
             'admin.coupons.*' => self::COUPONS,
             'admin.news-articles.*' => self::NEWS,
+            'admin.dealers.*' => self::DEALERS,
         ];
     }
 

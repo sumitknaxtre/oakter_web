@@ -58,6 +58,7 @@
     'page-gan' => request()->routeIs('website.gan_charger', 'website.buy_gan_charger'),
     'page-b2b' => request()->routeIs('website.collections.all'),
     'page-about' => request()->routeIs('website.about', 'website.legacy.pages.about_us', 'website.media_insights'),
+    'page-retail' => request()->routeIs('website.retail_outlets'),
     'page-contact' => request()->routeIs('website.contact', 'website.legacy.pages.contact_us', 'website.legacy.pages.support'),
     'page-privacy' => request()->routeIs('website.privacy'),
   ])>

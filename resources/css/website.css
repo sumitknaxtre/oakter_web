@@ -400,3 +400,221 @@
         gap: 40px;
     }
 }
+
+.store-finder {
+    max-width: 560px;
+    margin-top: 28px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.retail-outlets-page {
+    background: var(--white);
+}
+
+.retail-outlet-top {
+    padding: clamp(36px, 5vw, 64px) clamp(18px, 5vw, 72px) clamp(28px, 4vw, 40px);
+    color: var(--white);
+    background:
+        radial-gradient(circle at 78% 28%, rgba(244, 165, 28, 0.2), transparent 26%),
+        radial-gradient(circle at 18% 82%, rgba(14, 116, 144, 0.24), transparent 28%),
+        linear-gradient(115deg, #171717, #242321 56%, #3a3328);
+}
+
+.retail-outlet-hero-copy {
+    max-width: 720px;
+}
+
+.retail-outlet-top .eyebrow {
+    color: #f1c45d;
+}
+
+.retail-outlet-top h1 {
+    max-width: 16ch;
+    margin-bottom: 12px;
+    font-size: clamp(2rem, 3.4vw, 3.1rem);
+}
+
+.retail-outlet-lede {
+    max-width: 34rem;
+    margin: 0;
+    color: #ffffffbd;
+    font-size: clamp(1rem, 1.6vw, 1.12rem);
+    font-weight: 300;
+}
+
+.store-finder-panel {
+    display: grid;
+    gap: 10px;
+    padding: 16px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius-lg);
+    background: #ffffff14;
+    box-shadow: 0 24px 70px #0000003d;
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
+
+.store-finder-label {
+    color: #f1c45d;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.store-finder-select-wrap {
+    position: relative;
+    min-width: 0;
+}
+
+.store-finder-select-wrap::after {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    content: "";
+    pointer-events: none;
+    transform: translateY(-65%) rotate(45deg);
+}
+
+.store-finder select {
+    width: 100%;
+    min-width: 0;
+    height: 54px;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: var(--radius);
+    padding: 0 44px 0 16px;
+    color: var(--ink);
+    background: var(--white);
+    box-shadow: 0 12px 28px #17171724;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.store-finder select:focus-visible {
+    outline: 2px solid var(--orange);
+    outline-offset: 3px;
+}
+
+.retail-outlets-page.is-searching .store-finder,
+.retail-outlets-page.has-results .store-finder {
+    position: sticky;
+    top: 72px;
+    z-index: 5;
+}
+
+.outlet-directory {
+    padding: clamp(28px, 4vw, 48px) clamp(18px, 5vw, 72px) clamp(52px, 8vw, 96px);
+    background: var(--white);
+    scroll-margin-top: 140px;
+}
+
+.outlet-directory-heading {
+    max-width: 720px;
+}
+
+.outlet-directory-heading h2 {
+    font-size: clamp(1.55rem, 2.6vw, 2.2rem);
+}
+
+.outlet-directory-heading > p:not(.eyebrow) {
+    color: var(--muted);
+    font-size: 1.02rem;
+}
+
+.outlet-directory-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.outlet-directory-list:empty {
+    display: none;
+}
+
+.outlet-subregion {
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper);
+    box-shadow: 0 10px 24px #1717170a;
+}
+
+.outlet-subregion h3 {
+    margin-bottom: 14px;
+}
+
+.outlet-subregion ul {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.outlet-subregion li {
+    display: grid;
+    gap: 4px;
+    color: var(--muted);
+}
+
+.outlet-subregion li strong {
+    color: var(--ink);
+    font-size: 1.02rem;
+}
+
+.outlet-address {
+    white-space: pre-line;
+    line-height: 1.45;
+}
+
+.outlet-phone {
+    width: fit-content;
+    margin-top: 6px;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.outlet-phone:hover {
+    color: var(--ink);
+}
+
+.outlet-map {
+    width: fit-content;
+    color: var(--cool);
+    font-weight: 700;
+}
+
+.outlet-map:hover {
+    color: var(--ink);
+}
+
+@media (max-width: 760px) {
+    .retail-outlets-page.is-searching .store-finder,
+    .retail-outlets-page.has-results .store-finder {
+        top: 108px;
+    }
+
+    .outlet-directory {
+        scroll-margin-top: 180px;
+    }
+}
