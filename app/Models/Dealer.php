@@ -48,29 +48,27 @@ class Dealer extends Model
     }
 
     /**
-     * Territory region labels available for dealers (CSV order / alphabetical config).
+     * Full list for admin create/edit: official states/UTs plus CSV territory labels.
      *
      * @return list<string>
      */
-    public static function regionOptions(): array
+    public static function adminRegionOptions(): array
     {
-        $configured = config('dealer_regions');
+        $official = config('india.states', []);
+        $csvTerritories = config('dealer_regions', []);
 
-        if (is_array($configured) && $configured !== []) {
-            return array_values($configured);
-        }
+        $merged = array_unique([
+            ...(is_array($official) ? $official : []),
+            ...(is_array($csvTerritories) ? $csvTerritories : []),
+        ]);
 
-        return self::query()
-            ->whereNotNull('state')
-            ->where('state', '!=', '')
-            ->distinct()
-            ->orderBy('state')
-            ->pluck('state')
-            ->all();
+        sort($merged, SORT_STRING);
+
+        return array_values($merged);
     }
 
     /**
-     * Territory regions that have at least one active dealer, in config order.
+     * Regions with at least one active dealer (website dropdown), alphabetically.
      *
      * @return list<string>
      */
@@ -84,18 +82,7 @@ class Dealer extends Model
             ->pluck('state')
             ->all();
 
-        $regions = self::regionOptions();
-
-        $ordered = array_values(array_filter(
-            $regions,
-            fn (string $state): bool => in_array($state, $statesWithDealers, true),
-        ));
-
-        if ($ordered !== []) {
-            return $ordered;
-        }
-
-        sort($statesWithDealers);
+        sort($statesWithDealers, SORT_STRING);
 
         return array_values($statesWithDealers);
     }
