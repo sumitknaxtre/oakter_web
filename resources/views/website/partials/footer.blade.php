@@ -25,15 +25,14 @@
       <strong>Products</strong>
       <a href="{{ route('website.home') }}">Studio AC</a>
       <a href="{{ route('website.mini_ups') }}">Mini UPS</a>
-      <a href="{{ route('website.gan_charger') }}">GaN Charger</a>
+      {{-- <a href="{{ route('website.gan_charger') }}">GaN Charger</a> --}}
+      <a href="{{ route('website.retail_outlets') }}" @if (request()->routeIs('website.retail_outlets', 'website.retail_outlets.dealers')) aria-current="page" @endif>Retail Outlets</a>
       <a href="{{ route('website.collections.all') }}">B2B Products</a>
     </nav>
     <div class="footer-col">
       <strong>Company</strong>
       <a href="{{ route('website.about') }}" @if (request()->routeIs('website.about', 'website.legacy.pages.about_us')) aria-current="page" @endif>About us</a>
       <a href="{{ route('website.media_insights') }}" @if (request()->routeIs('website.media_insights')) aria-current="page" @endif>Media Insights</a>
-      {{-- Temporary: hide Retail Outlets from public nav; page still reachable via direct URL --}}
-      {{-- <a href="{{ route('website.retail_outlets') }}" @if (request()->routeIs('website.retail_outlets', 'website.retail_outlets.dealers')) aria-current="page" @endif>Retail Outlets</a> --}}
       <a href="{{ route('website.contact') }}" @if (request()->routeIs('website.contact', 'website.legacy.pages.contact_us', 'website.legacy.pages.support')) aria-current="page" @endif>Contact us</a>
       <a href="tel:+917575040506">+91 75750-40506</a>
       <a href="mailto:oye@oakter.com">oye@oakter.com</a>
