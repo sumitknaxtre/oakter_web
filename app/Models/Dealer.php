@@ -48,6 +48,28 @@ class Dealer extends Model
     }
 
     /**
+     * Territory region labels available for dealers (CSV order / alphabetical config).
+     *
+     * @return list<string>
+     */
+    public static function regionOptions(): array
+    {
+        $configured = config('dealer_regions');
+
+        if (is_array($configured) && $configured !== []) {
+            return array_values($configured);
+        }
+
+        return self::query()
+            ->whereNotNull('state')
+            ->where('state', '!=', '')
+            ->distinct()
+            ->orderBy('state')
+            ->pluck('state')
+            ->all();
+    }
+
+    /**
      * Territory regions that have at least one active dealer, in config order.
      *
      * @return list<string>
@@ -56,13 +78,25 @@ class Dealer extends Model
     {
         $statesWithDealers = self::query()
             ->active()
+            ->whereNotNull('state')
+            ->where('state', '!=', '')
             ->distinct()
             ->pluck('state')
             ->all();
 
-        return array_values(array_filter(
-            config('dealer_regions'),
+        $regions = self::regionOptions();
+
+        $ordered = array_values(array_filter(
+            $regions,
             fn (string $state): bool => in_array($state, $statesWithDealers, true),
         ));
+
+        if ($ordered !== []) {
+            return $ordered;
+        }
+
+        sort($statesWithDealers);
+
+        return array_values($statesWithDealers);
     }
 }
