@@ -3,6 +3,7 @@
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\MediaInsightsController;
 use App\Http\Controllers\Website\RetailOutletsController;
+use App\Http\Controllers\Website\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'website.index')->name('website.home');
@@ -11,6 +12,8 @@ Route::view('/contact-us', 'website.contact_us')->name('website.contact');
 Route::view('/privacy-policy', 'website.privacy_policy')->name('website.privacy');
 Route::view('/company-policies', 'website.company_policies')->name('website.company_policies');
 Route::view('/collections/all', 'website.b2b_products')->name('website.collections.all');
+
+Route::get('/sitemap.xml', SitemapController::class)->name('website.sitemap');
 
 Route::get('/retail-outlets', [RetailOutletsController::class, 'index'])->name('website.retail_outlets');
 Route::get('/retail-outlets/dealers', [RetailOutletsController::class, 'dealers'])
