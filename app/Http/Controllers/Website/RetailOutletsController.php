@@ -14,7 +14,7 @@ class RetailOutletsController extends Controller
     public function index(): View
     {
         return view('website.retail_outlets', [
-            'states' => config('indian_states'),
+            'states' => Dealer::activeStates(),
             'dealersUrl' => route('website.retail_outlets.dealers'),
         ]);
     }
@@ -22,7 +22,7 @@ class RetailOutletsController extends Controller
     public function dealers(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'state' => ['required', 'string', Rule::in(config('indian_states'))],
+            'state' => ['required', 'string', Rule::in(Dealer::activeStates())],
         ]);
 
         $state = $validated['state'];

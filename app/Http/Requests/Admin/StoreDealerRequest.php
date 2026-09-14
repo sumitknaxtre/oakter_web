@@ -22,7 +22,7 @@ class StoreDealerRequest extends FormRequest
             'address' => ['required', 'string', 'max:5000'],
             'phone' => ['nullable', 'string', 'max:50'],
             'map_url' => ['nullable', 'url', 'max:2048'],
-            'state' => ['required', 'string', Rule::in(config('indian_states'))],
+            'state' => ['required', 'string', Rule::in(config('dealer_regions'))],
             'district' => ['required', 'string', 'max:255'],
             'is_active' => ['sometimes', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:99999'],
