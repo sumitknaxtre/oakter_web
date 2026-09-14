@@ -10,15 +10,15 @@
       <div class="retail-outlet-hero-copy">
         <p class="eyebrow">Studio AC retail network</p>
         <h1>Find a Studio AC store near you.</h1>
-        <p class="retail-outlet-lede">Pick your state or UT — matching retail outlets show up right below.</p>
+        <p class="retail-outlet-lede">Pick your region — matching retail outlets show up right below.</p>
       </div>
 
       <div class="store-finder" data-store-finder data-dealers-url="{{ $dealersUrl }}">
         <div class="store-finder-panel">
-          <label class="store-finder-label" for="store-state">Your state or UT</label>
+          <label class="visually-hidden" for="store-state">Choose your region</label>
           <div class="store-finder-select-wrap">
             <select id="store-state" name="state" data-store-state>
-              <option value="">Choose a state or UT</option>
+              <option value="">Choose your region</option>
               @foreach ($states as $state)
                 <option value="{{ $state }}">{{ $state }}</option>
               @endforeach
@@ -31,8 +31,8 @@
     <div class="outlet-directory" id="store-directory" data-outlet-directory aria-live="polite">
       <div class="outlet-directory-heading">
         <p class="eyebrow">Retail outlets</p>
-        <h2 data-outlet-title>Choose a state to see stores.</h2>
-        <p data-outlet-message>Store addresses will appear here as soon as you select a state or UT.</p>
+        <h2 data-outlet-title>Choose a region to see stores.</h2>
+        <p data-outlet-message>Store addresses will appear here as soon as you select a region.</p>
       </div>
       <div class="outlet-directory-list" data-outlet-list></div>
     </div>

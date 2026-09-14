@@ -74,7 +74,7 @@ class DealerSeeder extends Seeder
                 'address' => 'NH21, Chandigarh Kharar Road, adjoining Palki Palace-II, Sector 119, Balongi, Sahibzada Ajit Singh Nagar, Punjab 160055',
                 'phone' => '7009876931',
                 'map_url' => null,
-                'state' => 'Punjab',
+                'state' => 'Chandigarh (Tricity)',
                 'district' => 'SAS Nagar',
             ],
             [
@@ -82,7 +82,7 @@ class DealerSeeder extends Seeder
                 'address' => 'Aarkay Warehouse, Godown Road, near Modi Kunj Society, Bhabat, Zirakpur, Punjab 140603',
                 'phone' => '7009876931',
                 'map_url' => null,
-                'state' => 'Punjab',
+                'state' => 'Chandigarh (Tricity)',
                 'district' => 'SAS Nagar',
             ],
             [
@@ -98,7 +98,7 @@ class DealerSeeder extends Seeder
                 'address' => 'Property No. 181, Block C, Shop No. 4, Kaushal Cinema Marg, Sohail Telecom, Jahangirpuri, Delhi 110033',
                 'phone' => '75039 02652',
                 'map_url' => 'https://share.google/Ks0PBG6iItywmxaIs',
-                'state' => 'Delhi',
+                'state' => 'Delhi/NCR',
                 'district' => 'North West',
             ],
             [
@@ -106,7 +106,7 @@ class DealerSeeder extends Seeder
                 'address' => 'B-1/32, Sector 18, Noida, Gautam Buddha Nagar, Uttar Pradesh 201301',
                 'phone' => '99717 33337',
                 'map_url' => null,
-                'state' => 'Uttar Pradesh',
+                'state' => 'Delhi/NCR',
                 'district' => 'Gautam Buddha Nagar',
             ],
             [

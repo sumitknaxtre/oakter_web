@@ -42,7 +42,7 @@ class DealerController extends Controller
                 'is_active' => true,
                 'sort_order' => 0,
             ]),
-            'states' => config('indian_states'),
+            'states' => config('dealer_regions'),
         ]);
     }
 
@@ -59,7 +59,7 @@ class DealerController extends Controller
     {
         return view('admin.dealers.edit', [
             'dealer' => $dealer,
-            'states' => config('indian_states'),
+            'states' => config('dealer_regions'),
         ]);
     }
 

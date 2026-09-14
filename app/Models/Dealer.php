@@ -46,4 +46,23 @@ class Dealer extends Model
             ->orderBy('district')
             ->orderBy('name');
     }
+
+    /**
+     * Territory regions that have at least one active dealer, in config order.
+     *
+     * @return list<string>
+     */
+    public static function activeStates(): array
+    {
+        $statesWithDealers = self::query()
+            ->active()
+            ->distinct()
+            ->pluck('state')
+            ->all();
+
+        return array_values(array_filter(
+            config('dealer_regions'),
+            fn (string $state): bool => in_array($state, $statesWithDealers, true),
+        ));
+    }
 }

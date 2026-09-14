@@ -244,8 +244,8 @@ function initStoreFinder() {
     };
 
     const resetDirectory = () => {
-        directoryTitle.textContent = 'Choose a state to see stores.';
-        directoryMessage.textContent = 'Store addresses will appear here as soon as you select a state or UT.';
+        directoryTitle.textContent = 'Choose a region to see stores.';
+        directoryMessage.textContent = 'Store addresses will appear here as soon as you select a region.';
         directoryList.replaceChildren();
         setPageState('idle');
     };
