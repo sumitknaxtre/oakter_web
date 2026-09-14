@@ -22,9 +22,9 @@
 
 <x-admin.form-row :cols="2">
   <div class="admin-field">
-    <label for="state">Territory / region</label>
+    <label for="state">State / region</label>
     <select id="state" name="state" required>
-      <option value="">Select territory</option>
+      <option value="">Select state or region</option>
       @foreach ($states as $state)
         <option value="{{ $state }}" @selected(old('state', $dealer->state) === $state)>{{ $state }}</option>
       @endforeach

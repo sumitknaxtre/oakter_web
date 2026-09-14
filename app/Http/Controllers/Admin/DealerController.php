@@ -42,7 +42,7 @@ class DealerController extends Controller
                 'is_active' => true,
                 'sort_order' => 0,
             ]),
-            'states' => Dealer::regionOptions(),
+            'states' => Dealer::adminRegionOptions(),
         ]);
     }
 
@@ -59,7 +59,7 @@ class DealerController extends Controller
     {
         return view('admin.dealers.edit', [
             'dealer' => $dealer,
-            'states' => Dealer::regionOptions(),
+            'states' => Dealer::adminRegionOptions(),
         ]);
     }
 
