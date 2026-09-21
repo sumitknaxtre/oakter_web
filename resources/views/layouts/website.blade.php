@@ -34,6 +34,7 @@
   <body @class([
     'page-studio' => request()->routeIs(
         'website.home',
+        'website.new_home',
         'website.buy_studio_ac',
         'website.legacy.collections.mini_ac',
         'website.legacy.products.studio_ac',

@@ -608,6 +608,112 @@
     color: var(--ink);
 }
 
+/* Desktop feature-grid: avoid border-right disappearing between columns (subpixel paint-over) */
+@media (min-width: 761px) {
+    .feature-grid {
+        column-gap: 1px;
+        background: var(--line);
+    }
+
+    .feature-grid article {
+        border-right: 0;
+    }
+}
+
+/* New homepage (studio-spec room-size layout) */
+.feature-points p {
+    margin: 0;
+}
+
+.feature-points p + p {
+    margin-top: 10px;
+}
+
+.spec-list .room-size-heading {
+    color: var(--ink);
+}
+
+.studio-spec-list {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+}
+
+.spec-list.studio-spec-list > div {
+    display: block;
+    grid-row: auto;
+}
+
+.spec-list.studio-spec-list > div.spec-list-title {
+    display: grid;
+    grid-column: 1 / -1;
+    place-items: center;
+    border-right: 0;
+    text-align: center;
+}
+
+.spec-list.studio-spec-list > div:nth-child(2),
+.spec-list.studio-spec-list > div:nth-child(4) {
+    display: block;
+    grid-column: 1;
+    place-items: initial;
+    align-content: initial;
+    border-right: 1px solid var(--line);
+    text-align: left;
+}
+
+.spec-list.studio-spec-list > div.spec-list-value {
+    display: grid;
+    grid-column: 2;
+    place-items: center;
+    padding-inline: 10px;
+    border-right: 0;
+    text-align: center;
+}
+
+.spec-list.studio-spec-list > div:nth-child(4),
+.spec-list.studio-spec-list > div:nth-child(5) {
+    border-bottom: 0;
+}
+
+.spec-list.studio-spec-list div:nth-child(2) dt,
+.spec-list.studio-spec-list div:nth-child(4) dt {
+    font-size: .96rem;
+    font-weight: 400;
+    text-transform: none;
+}
+
+.spec-list.studio-spec-list div:nth-child(2) dt strong,
+.spec-list.studio-spec-list div:nth-child(4) dt strong {
+    display: block;
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.spec-list.studio-spec-list div:nth-child(2) dt span,
+.spec-list.studio-spec-list div:nth-child(4) dt span {
+    display: block;
+    margin-top: 5px;
+}
+
+.spec-list.studio-spec-list .room-size-heading {
+    font-size: 1.18rem;
+    font-weight: 700;
+    text-transform: none;
+}
+
+.spec-list.studio-spec-list .spec-list-value dd {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0;
+}
+
+.spec-list.studio-spec-list .spec-list-value dd span {
+    display: block;
+}
+
 @media (max-width: 760px) {
     .retail-outlets-page.is-searching .store-finder,
     .retail-outlets-page.has-results .store-finder {

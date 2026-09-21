@@ -65,7 +65,7 @@
             </tr>
           @empty
             <tr class="admin-table-empty">
-              <td colspan="7">No dealers found. Run <code>php artisan db:seed --class=DealerSeeder</code>.</td>
+              <td colspan="7">No dealers found.</code>.</td>
             </tr>
           @endforelse
         </tbody>
