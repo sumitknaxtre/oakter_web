@@ -4,15 +4,14 @@
 
 @section('title', 'Oakter Studio AC 5000 | 0.5 Ton Window AC for Small Rooms')
 @section('meta_description', 'Buy Oakter Studio AC 5000, a compact 0.5 Ton 3 Star inverter window AC for bedrooms, studies, cabins, shops and small offices.')
-@section('canonical', url('/new-home'))
-@section('robots', 'noindex,nofollow')
+@section('canonical', url('/'))
 @section('og_type', 'product')
 @section('og_image', asset('assets/oakter-logo-1200.png'))
 
 @section('structured_data')
     <script type="application/ld+json">{"@@context":"https://schema.org","@@type":"Organization","name":"Oakter","url":"https://www.oakter.com","logo":"{{ asset('assets/oakter-logo-1200.png') }}","sameAs":["https://www.instagram.com/oyeoakter/","https://www.facebook.com/oakter/","https://www.youtube.com/channel/UC3h_V9-78yWVbtTi5eNWvZQ"],"contactPoint":[{"@@type":"ContactPoint","telephone":"+91-75750-40506","contactType":"customer support","areaServed":"IN"}]}</script>
-    <script type="application/ld+json">{"@@context":"https://schema.org","@@type":"Product","name":"Oakter Studio AC 5000","brand":{"@@type":"Brand","name":"Oakter"},"description":"Compact 0.5 Ton window AC for small rooms, bedrooms, studies, cabins, shops and small offices.","image":"{{ asset('assets/oakter-logo-1200.png') }}","offers":{"@@type":"Offer","priceCurrency":"INR","price":"16999","availability":"https://schema.org/InStock","url":"{{ url('/new-home') }}"}}</script>
-    <script type="application/ld+json">{"@@context":"https://schema.org","@@type":"BreadcrumbList","itemListElement":[{"@@type":"ListItem","position":1,"name":"Home","item":"{{ url('/new-home') }}"}]}</script>
+    <script type="application/ld+json">{"@@context":"https://schema.org","@@type":"Product","name":"Oakter Studio AC 5000","brand":{"@@type":"Brand","name":"Oakter"},"description":"Compact 0.5 Ton window AC for small rooms, bedrooms, studies, cabins, shops and small offices.","image":"{{ asset('assets/oakter-logo-1200.png') }}","offers":{"@@type":"Offer","priceCurrency":"INR","price":"16999","availability":"https://schema.org/InStock","url":"https://www.oakter.com/"}}</script>
+    <script type="application/ld+json">{"@@context":"https://schema.org","@@type":"BreadcrumbList","itemListElement":[{"@@type":"ListItem","position":1,"name":"Home","item":"https://www.oakter.com/"}]}</script>
 @endsection
 
 @section('main_id', 'top')
@@ -36,21 +35,21 @@
             />
             <div class="floating-spec top">
               <span>0.5 Ton</span>
-              <strong>Upto 120 Sq ft</strong>
+              <strong>For 75 sq. ft.</strong>
             </div>
             <div class="floating-spec bottom">
               <span>3 Star</span>
-              <strong>Electricity cost ₹4/hr</strong>
+              <strong>Electricity cost ₹5/hr</strong>
             </div>
           </div>
           <div class="desktop-spec-row" aria-label="Studio AC key highlights">
             <div class="floating-spec">
               <span>0.5 Ton</span>
-              <strong>Upto 120 Sq ft</strong>
+              <strong>For 75 sq. ft.</strong>
             </div>
             <div class="floating-spec">
               <span>3 Star</span>
-              <strong>Electricity cost ₹4/hr</strong>
+              <strong>Electricity cost ₹5/hr</strong>
             </div>
           </div>
           <div class="buy-block" aria-label="Studio AC purchase options">
@@ -62,12 +61,12 @@
               @include('website.partials.product-buy-button', [
                 'inStock' => $studioAc['is_in_stock'] ?? true,
                 'hideBuyButton' => $studioAc['hide_buy_button'] ?? false,
-                'href' => route('website.retail_outlets'),
-                'label' => 'Find A Retail Outlet',
+                'href' => route('website.buy_studio_ac'),
+                'label' => 'Buy Studio AC',
               ])
             </div>
             <div class="marketplaces compact hero-marketplaces">
-              <strong>Also available on</strong>
+              <strong>Available on</strong>
               <a href="https://www.flipkart.com/oakter-2026-model-0-5-ton-3-star-window-inverter-ac/p/itm3bc683b8e4445?pid=ACNHMYES7AHCAKTF" aria-label="Buy on Flipkart">
                 <img src="{{ asset('assets/mp-flipkart-B4UvsN8l.webp') }}" alt="Flipkart" />
               </a>
@@ -84,7 +83,7 @@
 
       <section class="section intro" id="compare">
         <div>
-          <p class="eyebrow">Studio AC</p>
+          <p class="eyebrow">Why Studio AC leads</p>
           <h2>Designed from first principles for Indian homes.</h2>
         </div>
         <p>
@@ -97,20 +96,18 @@
         <section class="feature-grid" data-carousel>
           <article>
             <span>01</span>
+            <h3>No rewiring drama</h3>
+            <p>Uses a standard 6 Amp plug, so the purchase decision does not get stuck on electrical work.</p>
+          </article>
+          <article>
+            <span>02</span>
             <h3>Built for Indian conditions</h3>
             <p>Designed for tropical, high humidity weather conditions.</p>
           </article>
           <article>
-            <span>02</span>
-            <h3>Lowest electricity cost</h3>
-            <p>Consumes only 525W, that's a running cost of ₹4/hour for residential usage.</p>
-          </article>
-          <article>
             <span>03</span>
-            <h3>Ease of installation</h3>
-            <div class="feature-points">
-              <p>Cut an opening of about 1.6ft X 1.4ft and mount with 6 screws</p>
-            </div>
+            <h3>Lowest electricity cost</h3>
+            <p>Consumes only 500W, that's a running cost of ₹5/hr for residential usage.</p>
           </article>
         </section>
         <div class="carousel-dots" aria-label="Feature carousel controls"></div>
@@ -121,14 +118,6 @@
           <div class="carousel-shell service-carousel-shell">
             <div class="service-icons" data-carousel>
               <div>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M3.34 7l17.32 10M3.34 17 20.66 7M12 2l-2 2M12 2l2 2M12 22l-2-2M12 22l2-2M3.34 7l2.73.73M3.34 7l.73 2.73M20.66 17l-2.73-.73M20.66 17l-.73-2.73M3.34 17l.73-2.73M3.34 17l2.73-.73M20.66 7l-.73 2.73M20.66 7l-2.73.73"/></svg>
-                <strong>0.5 Ton 3 Star Inverter AC</strong>
-              </div>
-              <div>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5c.88 0 1.68.47 2.12 1.23l7.04 12.2a2.45 2.45 0 0 1-2.12 3.68H4.96a2.45 2.45 0 0 1-2.12-3.68l7.04-12.2A2.45 2.45 0 0 1 12 1.5z"/><circle cx="12" cy="7.9" r="1.05"/><circle cx="8" cy="15.1" r="1.05"/><circle cx="16" cy="15.1" r="1.05"/></svg>
-                <strong>Small 3pin 6Amp Plug</strong>
-              </div>
-              <div>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-5"/></svg>
                 <strong>1-year product warranty</strong>
               </div>
@@ -136,26 +125,44 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-5"/></svg>
                 <strong>5-year compressor warranty</strong>
               </div>
+              <div>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v10H3z"/><path d="M14 11h4l3 3v3h-7z"/><path d="M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+                <strong>Free shipping</strong>
+              </div>
+              <div>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13-6"/><path d="M17 3v5h-5"/><path d="M20 12a8 8 0 0 1-13 6"/><path d="M7 21v-5h5"/></svg>
+                <strong>7-day replacement</strong>
+              </div>
             </div>
             <div class="carousel-dots" aria-label="Service carousel controls"></div>
+
           </div>
-          <dl class="spec-list studio-spec-list">
-            <div class="spec-list-title"><dt class="room-size-heading">RECOMMENDED ROOM SIZE</dt></div>
+          <dl class="spec-list">
+            <div><dt>Capacity</dt><dd>0.5 Ton</dd></div>
             <div>
-              <dt>
-                <strong>Rooms with medium heat-load</strong>
-                <span>Bedrooms, study, home office, shops...</span>
-              </dt>
+              <dt>Energy rating</dt>
+              <dd>
+                <span class="bee-rating" aria-label="3 out of 5 star energy rating">
+                  <svg viewBox="0 0 180 92" role="img" aria-hidden="true">
+                    <path class="bee-fill" d="M9 84A81 81 0 0 1 119 6L91 84H9Z" />
+                    <path class="bee-shell" d="M10 82A80 80 0 0 1 170 82H10Z" />
+                    <path class="bee-inner" d="M58 82A32 32 0 0 1 122 82H58Z" />
+                    <path class="bee-baseline" d="M10 82H170" />
+                    <text class="is-filled" x="35" y="66">★</text>
+                    <text class="is-filled" x="58" y="42">★</text>
+                    <text class="is-filled" x="90" y="32">★</text>
+                    <text class="is-empty" x="122" y="42">☆</text>
+                    <text class="is-empty" x="145" y="66">☆</text>
+                    <text class="bee-label" x="90" y="74">3 STAR</text>
+                  </svg>
+                </span>
+              </dd>
             </div>
-            <div class="spec-list-value"><dd><span>Upto 120</span><span>sq ft</span></dd></div>
-            <div>
-              <dt>
-                <strong>Rooms with high heat-load</strong>
-                <span>With all-day sun facing wall / Top Floor / Leaky doors or windows</span>
-              </dt>
-            </div>
-            <div class="spec-list-value"><dd><span>Upto 75</span><span>sq ft</span></dd></div>
+            <div><dt>Recommended room size</dt><dd>Up to 75 sq. ft.</dd></div>
+            <div><dt>Socket requirement</dt><dd>Standard 6 Amp plug</dd></div>
           </dl>
         </div>
       </section>
+
+  @include('website.partials.meta-view-content', ['configKey' => 'studio_ac'])
 @endsection

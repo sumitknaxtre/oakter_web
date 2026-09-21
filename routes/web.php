@@ -7,7 +7,7 @@ use App\Http\Controllers\Website\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'website.index')->name('website.home');
-Route::view('/new-home', 'website.new_home')->name('website.new_home');
+Route::redirect('/home', '/', 301);
 Route::view('/about', 'website.about_us')->name('website.about');
 Route::view('/contact-us', 'website.contact_us')->name('website.contact');
 Route::view('/privacy-policy', 'website.privacy_policy')->name('website.privacy');
